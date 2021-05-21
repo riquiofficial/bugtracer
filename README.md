@@ -1,6 +1,6 @@
 # Bugtracer
 
-An app which logs and traces bugs built with Python, Django, JavaScript and Bootstrap
+An app which logs and traces bugs built with Python, Django, JavaScript and Bootstrap's SB-Admin-2 theme
 
 Currently in development!
 
