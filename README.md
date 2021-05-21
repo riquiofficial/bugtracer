@@ -4,7 +4,7 @@ An app which logs and traces bugs built with Python, Django, JavaScript and Boot
 
 Currently in development!
 
-## Dependancies
+## Dependencies
 
 Python v3.8
 Django v2.2.5
