@@ -1,0 +1,16 @@
+{% extends "bugtracerapp/layout.html" %} {% block title %} - New
+Project{%endblock%}
+<!---->
+{%block body %}
+<div class="container-fluid">
+  <h1 class="h3 text-gray-800 my-5">Register New Project</h1>
+  <p class="">Please enter some information about this project/app</p>
+</div>
+<div class="container-fluid">
+  <form action="" method="POST" enctype="multipart/form-data">
+    {%csrf_token%} {{form}}
+    <input type="submit" class="btn btn-primary" />
+  </form>
+</div>
+
+{%endblock%}

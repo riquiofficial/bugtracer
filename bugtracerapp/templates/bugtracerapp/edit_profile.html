@@ -1,0 +1,21 @@
+{% extends "bugtracerapp/layout.html" %} {% block title %} - Profile{%endblock%}
+<!---->
+{%block body %} {%if user.id == request.user.id %}
+<div class="container-fluid">
+  <h1 class="h3 text-gray-800 my-5">Update Profile</h1>
+  <h4 class="mb-4">
+    {{user.username}}, please tell us a little bit about yourself:
+  </h4>
+</div>
+<div class="container-fluid">
+  <form action="" method="POST" enctype="multipart/form-data">
+    {%csrf_token%} {{form}}
+    <input type="submit" class="btn btn-primary" />
+  </form>
+</div>
+{%else%}
+<div class="container-fluid">
+  <h1 class="mb-5">You do not have permission to access this resource</h1>
+  <h4><a href="{%url 'index'%}">Back to Dashboard</a></h4>
+</div>
+{%endif%} {%endblock%}

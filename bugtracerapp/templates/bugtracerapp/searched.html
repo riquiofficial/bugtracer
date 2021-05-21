@@ -1,0 +1,69 @@
+{% extends "bugtracerapp/layout.html" %} {% block title %} - Search{%endblock%}
+<!---->
+{%block body %}
+<div class="container-fluid">
+  <h1 class="h1 text-gray-800 my-5">Search</h1>
+</div>
+<div class="list-group">
+  {%if bug_list%}
+  <h2 class="m-4">Bugs</h2>
+  {% for bug in bug_list %}
+
+  <div class="list-group-item list-group-item-action">
+    <a style="text-decoration: none" href="{% url 'bug_detail' bug.id %}">
+      <p
+        class="h4 text-{%if bug.priority == 1 %}danger{% elif bug.priority == 2 %}warning{%elif bug.solved%}secondary{%else%}info{%endif%}"
+      >
+        {{bug.title}} {% if bug.solved %} (resolved) {% endif %}
+      </p>
+      <p>
+        <a
+          href="{%url 'project_detail' bug.project.id%}"
+          style="z-index: 1; text-decoration: none"
+          ><strong class="f5 text-info">
+            {%if bug.project.logo%}
+            <img
+              style="width: 30px; border-radius: 50%"
+              src="{{bug.project.logo.url}}"
+              alt="{{bug.project.title}} logo"
+            />
+            {%endif%} {{bug.project}}</strong
+          ></a
+        >
+        - {%if bug.priority == 1%}High Priority {% elif bug.priority == 2%}
+        Medium Priority{% else %}Low Priority{%endif%}
+      </p>
+      <div class="text-right">
+        <p>
+          <small>Submitted by </small>{{bug.author}}
+          <small>on {{bug.date}}</small>
+        </p>
+      </div>
+    </a>
+  </div>
+  {% endfor %} {%else%}
+  <h3 class="m-3">No Bugs found...</h3>
+  {%endif%} {%if project_list%}
+  <h2 class="m-5">Projects</h2>
+  {%for project in project_list%}
+  <a
+    href="{% url 'project_detail' project.id %}"
+    class="list-group-item list-group-item-action"
+  >
+    <p class="h4 text-info">
+      {%if project.logo%}
+      <img
+        class="mr-4"
+        style="width: 60px; border-radius: 50%"
+        src="{{project.logo.url}}"
+        alt="{{project.title}} logo"
+      />
+      {%endif%} {{project.title}}
+    </p>
+    <p>{{project.description}}</p>
+  </a>
+  {%endfor%} {%else%}
+  <h3 class="m-3">No Projects found...</h3>
+  {%endif%}
+</div>
+{%endblock%}
