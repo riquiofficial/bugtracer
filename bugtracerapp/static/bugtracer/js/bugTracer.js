@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeBugs = document.getElementById("activeBugs");
   const solved = document.getElementById("solved");
 
+  // generate heading for active bug or solved bug page
   const heading = (solvedBugsPage = false) => {
     return `<div class="container-fluid">
         <h1 id="bugHeading" class="h1 text-gray-800 my-5">${
@@ -10,29 +11,106 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>`;
   };
 
-  const content = document.getElementById("jsContent");
+  const bugForm = document.getElementById("registerBugForm");
+  const projectForm = document.getElementById("registerProjectForm");
+  const jsContent = document.getElementById("jsContent");
+  const bugMenu = document.getElementById("bugMenu");
+  const projectMenu = document.getElementById("projectMenu");
 
-  function hideRegisterBugPage() {
-    const form = document.getElementById("registerBugForm");
-    const jsContent = document.getElementById("jsContent");
-    const bugMenu = document.getElementById("bugMenu");
+  // dynamically show which div to display
+  function showPage(page) {
+    jsContent.style.display = "none";
+    bugForm.style.display = "none";
+    projectForm.style.display = "none";
 
-    jsContent.style.display = "block";
-    form.style.display = "none";
-    bugMenu.click();
+    if (page === "registerBug") {
+      bugForm.style.display = "block";
+    } else if (page === "jsContent") {
+      jsContent.style.display = "block";
+    } else if (page == "registerProject") {
+      projectForm.style.display = "block";
+    }
   }
 
+  // bug registration page
+
+  document.getElementById("registerBug").addEventListener("click", () => {
+    showPage("registerBug");
+    closeNavBarMenu();
+    history.pushState({ section: "registerBug" }, null, "registerBug");
+  });
+
+  document.getElementById("submitBugForm").addEventListener("click", () => {
+    submitBugForm();
+  });
+
+  const title = document.getElementById("id_title");
+  const content = document.getElementById("id_content");
+  const priority = document.getElementById("id_priority");
+  const project = document.getElementById("id_project");
+  const bugCsrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+  const clear = () => {
+    title.value = "";
+    content.value = "";
+    priority.value = "";
+    project.value = "";
+  };
+
+  function submitBugForm() {
+    const baseUrl = window.location.hostname;
+    const request = new Request(baseUrl, {
+      headers: { "X-CSRFToken": bugCsrf.value },
+    });
+
+    fetch(request, {
+      method: "POST",
+      body: JSON.stringify({
+        title: title.value,
+        content: content.value,
+        priority: priority.value,
+        project: project.value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => alert(result.message ? result.message : result.error))
+      .then(() => clear())
+      .catch((err) => console.log(err));
+  }
+
+  // end of bug registration page
+
+  // project registration page
+
+  document
+    .getElementById("registerNewProject")
+    .addEventListener("click", () => {
+      showPage("registerProject");
+      closeNavBarMenu();
+      history.pushState(
+        { section: "registerProject" },
+        null,
+        "registerProject"
+      );
+    });
+
+  // end of project registration page
+
   activeBugs.addEventListener("click", () => {
-    fetchActive();
-    hideRegisterBugPage();
+    fetchBugs();
+    showPage("jsContent");
+    closeNavBarMenu();
+    history.pushState({ section: "activeBugs" }, null, "ActiveBugs");
   });
 
   solved.addEventListener("click", () => {
-    fetchActive((page = 1), (solvedBugsPage = true));
-    hideRegisterBugPage();
+    fetchBugs(1, true);
+    showPage("jsContent");
+    closeNavBarMenu();
+    history.pushState({ section: "solved" }, null, "ResolvedBugs");
   });
 
-  function fetchActive(page = null, solvedBugsPage = false) {
+  function fetchBugs(page = null, solvedBugsPage = false) {
     fetch(
       `/api/${solvedBugsPage ? "solved" : "active"}/?format=json${
         page ? "&page=" + page : ""
@@ -47,18 +125,17 @@ document.addEventListener("DOMContentLoaded", () => {
               data.results.map((bug) => createHtmlElement(bug)),
               createPagination(data.count),
             ]
-          : (content.innerHTML = "No active bugs...")
+          : (jsContent.innerHTML = "No active bugs...")
       )
 
       // if html elements, join html list and render out on page
       .then((html) =>
         html !== "No active bugs..."
-          ? (content.innerHTML =
+          ? (jsContent.innerHTML =
               heading(solvedBugsPage) + html[0].join("") + html[1])
           : ""
       )
-      .then(() => closeNavBarMenu())
-      .then(() => activatePageLinks())
+      .then(() => activatePaginationLinks())
       .catch((err) => console.log(err));
   }
 
@@ -71,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let pagination = [];
     const containerEnd = "</ul></nav>";
 
-    // for each page number generate pagination button
+    // for each page number generate a new pagination button
     let i = 1;
     while (i <= pages) {
       const li = `<li class="page-item" style="cursor: pointer"><a class="page-link">${i}</a></li>`;
@@ -128,14 +205,20 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
     }
 
+    if (obj.solved) {
+      className = "success";
+    }
+
     //create element with data from api
     return `
-      <div class="card shadow">
+  <div class="card shadow">
     <a href="#a${id}" class="d-block card-header py-3 collapsed" data-toggle="collapse" 
       role="button" aria-expanded="false" aria-controls="a${id}">
       <h6 class="m-0 font-weight-bold text-${className}">${obj.title}
-        <span class="btn-sm ml-2 btn-${priority} btn-circle">
-          <i class="fas fa-exclamation-triangle"></i>
+        <span class="btn-sm ml-2 btn-${className} btn-circle">
+          <i class="fas fa-${
+            obj.solved ? "check" : "exclamation-triangle"
+          }"></i>
         </span>
       </h6>
     </a>
@@ -155,9 +238,19 @@ document.addEventListener("DOMContentLoaded", () => {
           </a>
           - ${priority}
         </div>
-        <div className="content mb-2">
+        <div class="content mb-2">
           <p class="ml-4">${obj.content}</p>
+          ${
+            obj.solved
+              ? ""
+              : `
+          <div class="resolved ml-4">
+          <button id="resolvedButton" class="btn btn-sm btn-success">Resolve</button>
+          </div>
+          `
+          }
         </div>
+        
         <div class="text-right">
           <p class="mb-0">
             <small>Submitted by <a href="/profile/${obj.author.username}">
@@ -177,28 +270,44 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function closeNavBarMenu() {
-    bugMenu = document.getElementById("bugMenu");
     if (!bugMenu.classList.contains("collapsed")) {
       bugMenu.click();
+    } else if (!projectMenu.classList.contains("collapsed")) {
+      projectMenu.click();
     }
   }
 
-  function activatePageLinks() {
+  function activatePaginationLinks() {
     const pageButtons = document.querySelectorAll(".page-link");
     const solvedHeading = document.getElementById("bugHeading");
     const solvedPagination = solvedHeading.innerHTML[0] === "S";
-
+    // send pagination link to the correct api page link
     pageButtons.forEach((li) =>
       li.addEventListener(
         "click",
-        (e) =>
-          fetchActive(
-            (page = e.target.innerHTML),
-            (solvedBugsPage = solvedPagination)
-          ),
-        //scroll to top when data loaded on page
+        (e) => fetchBugs(e.target.innerHTML, solvedPagination),
+        // scroll to top when data loaded on page
         document.getElementsByClassName("scroll-to-top")[0].click()
       )
     );
   }
+
+  // browser history back/forward
+  window.onpopstate = function (e) {
+    const prevPage = e.state;
+    if (prevPage == null || e.state == null) {
+      showPage();
+    } else if (prevPage.section == "activeBugs") {
+      fetchBugs();
+      showPage("jsContent");
+    } else if (prevPage.section == "solved") {
+      fetchBugs(1, true);
+      showPage("jsContent");
+    } else if (
+      prevPage.section == "registerBug" ||
+      prevPage.section == "registerProject"
+    ) {
+      showPage(prevPage.section);
+    }
+  };
 });

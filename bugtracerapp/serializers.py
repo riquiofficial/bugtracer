@@ -15,6 +15,14 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'title', 'logo']
 
 
+class ProjectDetailSerializer(serializers.HyperlinkedModelSerializer):
+    contributors = UserSerializer(source='get_user_profiles', many=True)
+
+    class Meta:
+        model = Project
+        fields = ['id', 'title', 'logo', 'contributors', 'description', 'date']
+
+
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = UserSerializer()
 

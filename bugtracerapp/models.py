@@ -67,3 +67,9 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_user_profiles(self):
+        user_list = []
+        for user in self.contributors.all():
+            user_list.append(user)
+        return user_list

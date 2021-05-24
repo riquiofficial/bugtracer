@@ -24,6 +24,24 @@
       href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
       rel="stylesheet"
     />
+    <style>
+        /* if href removed from anchor tags, change cursor to pointer */
+        a {
+            cursor: pointer;
+        }
+
+        @keyframes showPage {
+            from {opacity: 0;
+            transform: translateX(-50px)}
+            to { opacity: 1;
+            transform: translateX(0)}
+        }
+
+        .dynamic-content {
+            animation-name: showPage;
+            animation-duration: .5s;
+        }
+    </style>
   </head>
   <body id="page-top">
 
@@ -87,10 +105,9 @@
                   data-parent="#accordionSidebar">
                   <div class="bg-white py-2 collapse-inner rounded">
                       <h6 class="collapse-header">Customise Bugs:</h6>
-                      <a class="collapse-item" id="activeBugs" href="#">Active Bugs</a>
-                      <a class="collapse-item" id="registerBug" href="#">Register Bug</a>
-                      <a class="collapse-item" id="solved" href="#">Resolved Bugs</a>
-                      <!-- <a class="collapse-item" href="#">Other</a> -->
+                      <a class="collapse-item" id="activeBugs">Active Bugs</a>
+                      <a class="collapse-item" id="solved">Resolved Bugs</a>
+                      <a class="collapse-item" id="registerBug">Register Bug</a>
                   </div>
               </div>
           </li>
@@ -105,7 +122,7 @@
 
           <!-- Nav Item - Pages Collapse Menu -->
           <li class="nav-item {% if request.path == '/projects' or request.path == '/newproject' %} active {% endif %}">
-              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+              <a class="nav-link collapsed" href="#" id="projectMenu" data-toggle="collapse" data-target="#collapsePages"
                   aria-expanded="true" aria-controls="collapsePages">
                   <i class="fas fa-fw fa-folder"></i>
                   <span>Projects</span>
@@ -113,8 +130,8 @@
               <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                   <div class="bg-white py-2 collapse-inner rounded">
                       <h6 class="collapse-header">Project Update</h6>
-                      <a class="collapse-item" href="{% url 'project_list' %}">All Projects</a>
-                      <a class="collapse-item" href="{% url 'new_project' %}">Add New Project</a>
+                      <a class="collapse-item" id="allProjects">All Projects</a>
+                      <a class="collapse-item" id="registerNewProject">Add New Project</a>
                       <!-- <div class="collapse-divider"></div>
                       <h6 class="collapse-header">Other Pages:</h6>
                       <a class="collapse-item" href="404.html">404 Page</a>
@@ -382,7 +399,9 @@
 
               </nav>
               <!-- End of Topbar -->
-    <div class="register-form" id="registerBugForm" style="display: none">
+
+              <!-- Register Bugs Page -->
+    <div class="register-form dynamic-content" id="registerBugForm" style="display: none">
         <div class="container-fluid">
             <h1 class="h3 text-gray-800 my-5">
                 Register New Bug
@@ -391,14 +410,28 @@
         </div>
         <div class="container-fluid">
             <form>
-                {%csrf_token%} {{form}}
+                {%csrf_token%} {{bug_form}}
                 <input id="submitBugForm" class="btn btn-primary mt-4" value="Submit" />
             </form>
         </div>
     </div>
 
+    <!-- Register Projects page -->
+    <div class="dynamic-content" id="registerProjectForm" style="display: none">
+    <div class="container-fluid" >
+        <h1 class="h3 text-gray-800 my-5">Register New Project</h1>
+        <p class="">Please enter some information about this project/app</p>
+      </div>
+      <div class="container-fluid">
+        <form action="" method="POST" enctype="multipart/form-data">
+          {%csrf_token%} {{project_form}}
+          <input type="submit" class="btn btn-primary" />
+        </form>
+      </div>
+    </div>
 
-    <div id="jsContent">{% block body %} {% endblock %}</div>
+    <!-- Dynamic Fetched Data -->
+    <div class="dynamic-content" id="jsContent">{% block body %} {% endblock %}</div>
 
      <!-- Footer -->
      <footer class="sticky-footer bg-white">
@@ -462,7 +495,7 @@ aria-hidden="true">
  <script src="{% static 'bugtracer/js/messages.js' %}"></script>
 
  <!-- Pages -->
- <script src="{% static 'bugtracer/js/bugPage.js' %}"></script>
- <script src="{% static 'bugtracer/js/registerBugPage.js' %}"></script>
+ <script type="module" src="{% static 'bugtracer/js/bugTracer.js' %}"></script>
+ <!-- <script src="{% static 'bugtracer/js/registerBugPage.js' %}"></script> -->
   </body>
 </html>

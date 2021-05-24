@@ -1,6 +1,5 @@
 # generic views
 from django.http.response import JsonResponse
-from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
@@ -27,7 +26,8 @@ import json
 
 @login_required(login_url='login')
 def index(request):
-    form = BugForm
+    bug_form = BugForm
+    project_form = ProjectForm
 
     if request.method == "POST":
         data = json.loads(request.body)
@@ -37,25 +37,37 @@ def index(request):
             if value == "":
                 return JsonResponse({"error": f"Please fill all fields, {key} was missing"}, status=401)
 
-        # check bug does not exist
-        try:
-            Bug.objects.get(title=data['title'])
-            return JsonResponse({'error': 'Bug title already exists!'}, status=406)
-        except Bug.DoesNotExist:
-            # attempt to create bug
+        # New Bug Form Submission. if data contains priority field it is bug form
+        if data['priority']:
+            # check bug does not exist
             try:
-                project = Project.objects.get(pk=data['project'])
-                bug = Bug.objects.create(title=data['title'], author=request.user,
-                                         content=data['content'], priority=data['priority'], project=project)
-                bug.save()
-                return JsonResponse({"message": "successfully created!"}, status=201)
-            except ValueError:
-                return JsonResponse({"error": "Please fill all fields correctly"}, status=400)
-            except:
-                JsonResponse(
-                    {"error": "Something else went wrong"}, status=404)
+                Bug.objects.get(title=data['title'])
+                return JsonResponse({'error': 'Bug title already exists!'}, status=406)
+            except Bug.DoesNotExist:
+                # if does not exist, attempt to create bug
+                try:
+                    project = Project.objects.get(pk=data['project'])
+                    bug = Bug.objects.create(title=data['title'], author=request.user,
+                                             content=data['content'], priority=data['priority'], project=project)
+                    bug.save()
+                    return JsonResponse({"message": "successfully created!"}, status=201)
+                except ValueError:
+                    return JsonResponse({"error": "Please fill all fields correctly"}, status=400)
+                except:
+                    JsonResponse(
+                        {"error": "Something else went wrong"}, status=404)
 
-    return render(request, 'bugtracerapp/layout.html', {"form": form})
+        # if contributors field exists it is project form
+        elif data['contributors']:
+            try:
+                Project.objects.get(title=data['title'])
+                return JsonResponse({'error': 'Project title already exists!'}, status=406)
+            except Project.DoesNotExist:
+                # project = Project.objects.create(
+                # title=data['title'], contributors=data['contributors'], )
+                print(data)
+
+    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
 
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -75,39 +87,13 @@ class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class BugDetail(LoginRequiredMixin, DetailView):
+class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
-    model = Bug
-
-
-class CreateBug(LoginRequiredMixin, CreateView):
-    login_url = 'login'
-    model = Bug
-    success_url = reverse_lazy('index')
-    form_class = BugForm
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        print("hello")
-        return super().form_valid(form)
-
-
-class UpdateBug(LoginRequiredMixin, UpdateView):
-    login_url = 'login'
-    model = Bug
-    success_url = reverse_lazy('index')
-    form_class = BugForm
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
-class ProjectList(LoginRequiredMixin, ListView):
-    login_url = 'login'
-    model = Project
-    ordering = ['-date']
+    queryset = Project.objects.all()
+    ordering = ['title']
     paginate_by = 10
+    serializer_class = ProjectDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class ProjectDetail(LoginRequiredMixin, DetailView):
