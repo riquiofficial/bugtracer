@@ -57,7 +57,7 @@ class Bug(models.Model):
 
 class Project(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
-    contributors = models.ManyToManyField(User)
+    contributors = models.ManyToManyField(User, blank=True)
     description = models.CharField(max_length=500)
     date = models.DateTimeField(auto_now_add=True)
     logo = models.ImageField(upload_to="logos/", null=True, blank=True)

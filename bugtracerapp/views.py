@@ -30,7 +30,7 @@ def index(request):
     project_form = ProjectForm
 
     if request.method == "POST":
-        data = json.loads(request.body)
+        data = request.POST
 
         # check all fields filled out
         for key, value in data.items():
@@ -38,8 +38,8 @@ def index(request):
                 return JsonResponse({"error": f"Please fill all fields, {key} was missing"}, status=401)
 
         # New Bug Form Submission. if data contains priority field it is bug form
-        if data['priority']:
-            # check bug does not exist
+        if "priority" in data:
+            #     # check bug does not exist
             try:
                 Bug.objects.get(title=data['title'])
                 return JsonResponse({'error': 'Bug title already exists!'}, status=406)
@@ -50,7 +50,7 @@ def index(request):
                     bug = Bug.objects.create(title=data['title'], author=request.user,
                                              content=data['content'], priority=data['priority'], project=project)
                     bug.save()
-                    return JsonResponse({"message": "successfully created!"}, status=201)
+                    return JsonResponse({"message": "Bug successfully added!"}, status=201)
                 except ValueError:
                     return JsonResponse({"error": "Please fill all fields correctly"}, status=400)
                 except:
@@ -58,14 +58,31 @@ def index(request):
                         {"error": "Something else went wrong"}, status=404)
 
         # if contributors field exists it is project form
-        elif data['contributors']:
+        elif "contributors" in data:
+
+            # check if project already exists
             try:
                 Project.objects.get(title=data['title'])
                 return JsonResponse({'error': 'Project title already exists!'}, status=406)
+            # attempt adding new project
             except Project.DoesNotExist:
-                # project = Project.objects.create(
-                # title=data['title'], contributors=data['contributors'], )
-                print(data)
+                new_project = Project.objects.create(
+                    title=data['title'], description=data['description'], logo=request.FILES['logo'])
+
+                # add multiple contributors
+                all_contributors = [data['contributors'].split(',')]
+                for num in all_contributors[0]:
+                    new_project.contributors.add(num)
+
+                new_project.save()
+
+                return JsonResponse({"message": "Project successfully created!"}, status=201)
+
+            except ValueError:
+                return JsonResponse({"error": "Please fill all fields correctly"}, status=400)
+            except:
+                JsonResponse(
+                    {"error": "Something else went wrong"}, status=404)
 
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
 

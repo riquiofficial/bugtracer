@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // nav menu items
   const activeBugs = document.getElementById("activeBugs");
   const solved = document.getElementById("solved");
 
@@ -22,13 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
     jsContent.style.display = "none";
     bugForm.style.display = "none";
     projectForm.style.display = "none";
-
     if (page === "registerBug") {
       bugForm.style.display = "block";
-    } else if (page === "jsContent") {
-      jsContent.style.display = "block";
     } else if (page == "registerProject") {
       projectForm.style.display = "block";
+    } else if (page == "jsContent") {
+      jsContent.style.display = "block";
     }
   }
 
@@ -40,41 +40,43 @@ document.addEventListener("DOMContentLoaded", () => {
     history.pushState({ section: "registerBug" }, null, "registerBug");
   });
 
-  document.getElementById("submitBugForm").addEventListener("click", () => {
-    submitBugForm();
-  });
-
   const title = document.getElementById("id_title");
   const content = document.getElementById("id_content");
   const priority = document.getElementById("id_priority");
   const project = document.getElementById("id_project");
   const bugCsrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
-  const clear = () => {
+  document.getElementById("submitBugForm").addEventListener("click", () => {
+    let bugFormFields = new FormData();
+    bugFormFields.append("title", title.value);
+    bugFormFields.append("content", content.value);
+    bugFormFields.append("project", project.value);
+    bugFormFields.append("priority", priority.value);
+
+    submitForm(bugCsrf, bugFormFields);
+  });
+
+  const clearBugForm = () => {
     title.value = "";
     content.value = "";
     priority.value = "";
     project.value = "";
   };
 
-  function submitBugForm() {
-    const baseUrl = window.location.hostname;
-    const request = new Request(baseUrl, {
-      headers: { "X-CSRFToken": bugCsrf.value },
-    });
-
-    fetch(request, {
+  function submitForm(csrf, formData) {
+    fetch(window.location.origin, {
       method: "POST",
-      body: JSON.stringify({
-        title: title.value,
-        content: content.value,
-        priority: priority.value,
-        project: project.value,
-      }),
+      mode: "same-origin",
+      headers: {
+        "X-CSRFToken": csrf.value,
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: formData,
     })
       .then((response) => response.json())
       .then((result) => alert(result.message ? result.message : result.error))
-      .then(() => clear())
+      .then(() => clearBugForm())
+      .then(() => clearProjectForm())
       .catch((err) => console.log(err));
   }
 
@@ -94,7 +96,148 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
 
+  const projectName = document.getElementById("project_name");
+  const description = document.getElementById("id_description");
+  const logo = document.getElementById("id_logo");
+  const contributors = document.querySelector("#id_contributors");
+  const projectCsrf = document.getElementsByName("csrfmiddlewaretoken")[1];
+
+  document.getElementById("submitProjectForm").addEventListener("click", () => {
+    // get all contributors
+    const contributorsSelected = document.querySelectorAll(
+      "#id_contributors option:checked"
+    );
+    const contributorValues = Array.from(contributorsSelected).map(
+      (el) => el.value
+    );
+
+    // construct form data for fetch function
+    let formData = new FormData();
+    formData.append("logo", logo.files[0]);
+    formData.append("title", projectName.value);
+    formData.append("contributors", contributorValues);
+    formData.append("description", description.value);
+    console.log(contributorValues);
+
+    submitForm(projectCsrf, formData);
+  });
+
+  const clearProjectForm = () => {
+    projectName.value = "";
+    contributors.value = "";
+    description.value = "";
+    logo.value = "";
+  };
+
   // end of project registration page
+
+  // project list page
+
+  document.getElementById("allProjects").addEventListener("click", () => {
+    showPage("jsContent");
+    fetchProjects();
+    closeNavBarMenu();
+  });
+
+  function fetchProjects(pageNumber) {
+    fetch(
+      `/api/projects/?format=json${pageNumber ? "&page=" + pageNumber : ""}`
+    )
+      .then((response) => response.json())
+      // check if data received. Use it to create list of html elements
+      .then((data) =>
+        data
+          ? [
+              data.results.map((project) => createProjectHtmlElement(project)),
+              createPagination(data.count),
+            ]
+          : (jsContent.innerHTML = "No active projects...")
+      )
+      // if html elements, join html list and render out on page
+      .then((html) =>
+        html !== "No active Projects..."
+          ? (jsContent.innerHTML =
+              `<div class="container-fluid">
+          <h1 class="h1 text-gray-800 my-5">Projects</h1>
+        </div><div class="list-group>` +
+              html[0].join("") +
+              "</div>" +
+              html[1])
+          : ""
+      )
+      .then(() => activatePaginationLinks(true))
+      .catch((err) => console.log(err));
+  }
+
+  function createProjectHtmlElement(project) {
+    const timeUnformatted = new Date(project.date);
+    const time = formatDate(timeUnformatted);
+
+    return `
+<div className="list">
+  <a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#project-${
+    project.id
+  }">
+    <p class="h4 text-info">
+      ${
+        project.logo
+          ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
+      src="${project.logo}" alt="${project.title} logo">`
+          : ""
+      }
+       ${project.title}
+    </p>
+    <p>${project.description}</p>
+  </a>
+  </div>
+
+<div class="modal fade" id="project-${
+      project.id
+    }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">
+          ${
+            project.logo
+              ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
+          src="${project.logo}" alt="${project.title} logo"
+          />`
+              : ""
+          }${project.title}</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+          </button>
+      </div>
+      <div class="modal-body">
+      <p>${project.description}</p>
+      <p><small>Contributors:</p> 
+      <ul style="list-style: none">
+      ${project.contributors
+        .map(
+          (
+            contributor
+          ) => `<li style="padding: 3px"><img src="${contributor.profile_picture}" 
+      width="40px" height="40px" class="rounded-circle" alt="${contributor.username}'s profile picture">
+      ${contributor.username}</li>`
+        )
+        .join("")}
+        
+        </ul></small>
+        <p class="mb-0 text-right"><small>Date Created: ${time}</small></p>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-info" id="editProject">Edit</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    `;
+  }
+
+  // active and solved bugs pages
 
   activeBugs.addEventListener("click", () => {
     fetchBugs();
@@ -122,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) =>
         data
           ? [
-              data.results.map((bug) => createHtmlElement(bug)),
+              data.results.map((bug) => createBugHtmlElement(bug)),
               createPagination(data.count),
             ]
           : (jsContent.innerHTML = "No active bugs...")
@@ -160,13 +303,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatDate(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? "pm" : "am";
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "pm" : "am";
+
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? "0" + minutes : minutes;
-    var strTime = hours + ":" + minutes + " " + ampm;
+    const strTime = hours + ":" + minutes + " " + ampm;
+
     return (
       date.getMonth() +
       1 +
@@ -179,18 +324,18 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  function createHtmlElement(obj) {
+  function createBugHtmlElement(bug) {
     // convert date to readable format
-    const timeUnformatted = new Date(obj.date);
-    const lastModifiedUnformatted = new Date(obj.last_modified);
+    const timeUnformatted = new Date(bug.date);
+    const lastModifiedUnformatted = new Date(bug.last_modified);
     const time = formatDate(timeUnformatted);
     const lastModified = formatDate(lastModifiedUnformatted);
 
-    // set class and text based on object priority
+    // set class and text based on bug priority
     let className;
     let priority;
-    const id = obj.id;
-    switch (parseInt(obj.priority)) {
+    const id = bug.id;
+    switch (parseInt(bug.priority)) {
       case 1:
         className = "danger";
         priority = "High Priority";
@@ -205,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
     }
 
-    if (obj.solved) {
+    if (bug.solved) {
       className = "success";
     }
 
@@ -214,10 +359,10 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="card shadow">
     <a href="#a${id}" class="d-block card-header py-3 collapsed" data-toggle="collapse" 
       role="button" aria-expanded="false" aria-controls="a${id}">
-      <h6 class="m-0 font-weight-bold text-${className}">${obj.title}
+      <h6 class="m-0 font-weight-bold text-${className}">${bug.title}
         <span class="btn-sm ml-2 btn-${className} btn-circle">
           <i class="fas fa-${
-            obj.solved ? "check" : "exclamation-triangle"
+            bug.solved ? "check" : "exclamation-triangle"
           }"></i>
         </span>
       </h6>
@@ -226,22 +371,22 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="card-body">
         <div class="project mb-4">
           <a
-            href="/project/${obj.project.id}">
+            href="/project/${bug.project.id}">
             <img
                 style="width: 30px"
                 class="rounded-circle"
-                src="${obj.project.logo}"
-                alt="${obj.project.title} logo"/>
+                src="${bug.project.logo}"
+                alt="${bug.project.title} logo"/>
             <strong class="f5 text-info">
-              ${obj.project.title}
+              ${bug.project.title}
             </strong>
           </a>
           - ${priority}
         </div>
         <div class="content mb-2">
-          <p class="ml-4">${obj.content}</p>
+          <p class="ml-4">${bug.content}</p>
           ${
-            obj.solved
+            bug.solved
               ? ""
               : `
           <div class="resolved ml-4">
@@ -253,8 +398,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         <div class="text-right">
           <p class="mb-0">
-            <small>Submitted by <a href="/profile/${obj.author.username}">
-            </small>${obj.author.username}
+            <small>Submitted by <a href="/profile/${bug.author.username}">
+            </small>${bug.author.username}
             </a>
             <small>on ${time}</small>
           </p>
@@ -277,19 +422,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function activatePaginationLinks() {
+  function activatePaginationLinks(projectsPage = false) {
     const pageButtons = document.querySelectorAll(".page-link");
     const solvedHeading = document.getElementById("bugHeading");
-    const solvedPagination = solvedHeading.innerHTML[0] === "S";
+    let solvedPagination = false;
+
+    // check if resolved bugs request by checking title of page
+    if (solvedHeading) {
+      solvedPagination = solvedHeading.innerHTML[0] === "S";
+    }
+
     // send pagination link to the correct api page link
-    pageButtons.forEach((li) =>
+    pageButtons.forEach((li) => {
       li.addEventListener(
         "click",
-        (e) => fetchBugs(e.target.innerHTML, solvedPagination),
+        // if solved page, "solved=true" passes into fetchBugs to get solved data
+        // using solvedPagination conditional
+        (e) =>
+          // check whether pagination being loaded for project page or bug page
+          projectsPage
+            ? fetchProjects(e.target.innerHTML)
+            : fetchBugs(e.target.innerHTML, solvedPagination),
         // scroll to top when data loaded on page
         document.getElementsByClassName("scroll-to-top")[0].click()
-      )
-    );
+      );
+    });
   }
 
   // browser history back/forward
@@ -308,6 +465,9 @@ document.addEventListener("DOMContentLoaded", () => {
       prevPage.section == "registerProject"
     ) {
       showPage(prevPage.section);
+    } else if (prevPage.section == "allProjects") {
+      fetchProjects();
+      showPage("jsContent");
     }
   };
 });

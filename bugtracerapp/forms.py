@@ -23,7 +23,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = ['title', 'contributors', 'description', 'logo']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control mb-2'}),
+            'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'project_name'}),
             'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2'}),
             'description': forms.TextInput(attrs={'class': 'form-control mb-2'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'})
