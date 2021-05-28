@@ -30,6 +30,19 @@ class ProjectForm(forms.ModelForm):
         }
 
 
+class UpdateProjectForm(forms.ModelForm):
+
+    class Meta:
+        model = Project
+        fields = ['title', 'contributors', 'description', 'logo']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'update-project-name'}),
+            'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2', 'id': 'update-contributors'}),
+            'description': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'update-description'}),
+            'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2', 'id': 'update-logo'})
+        }
+
+
 class CreateUserForm(UserCreationForm):
 
     class Meta:

@@ -28,6 +28,7 @@ import json
 def index(request):
     bug_form = BugForm
     project_form = ProjectForm
+    update_project_form = UpdateProjectForm
 
     if request.method == "POST":
         data = request.POST
@@ -39,7 +40,7 @@ def index(request):
 
         # New Bug Form Submission. if data contains priority field it is bug form
         if "priority" in data:
-            #     # check bug does not exist
+            # check if bug already exists
             try:
                 Bug.objects.get(title=data['title'])
                 return JsonResponse({'error': 'Bug title already exists!'}, status=406)
@@ -84,7 +85,7 @@ def index(request):
                 JsonResponse(
                     {"error": "Something else went wrong"}, status=404)
 
-    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
+    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, 'update_project_form': update_project_form})
 
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -117,6 +118,7 @@ class ProjectDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
     model = Project
 
+    # get and show bugs for this project
     def get_context_data(self, **kwargs):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         context['bug_list'] = Bug.objects.filter(

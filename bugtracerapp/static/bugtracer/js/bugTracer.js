@@ -156,16 +156,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // if html elements, join html list and render out on page
       .then((html) =>
         html !== "No active Projects..."
-          ? (jsContent.innerHTML =
-              `<div class="container-fluid">
+          ? [
+              (jsContent.innerHTML =
+                `<div class="container-fluid">
           <h1 class="h1 text-gray-800 my-5">Projects</h1>
         </div><div class="list-group>` +
-              html[0].join("") +
-              "</div>" +
-              html[1])
+                html[0].join("") +
+                "</div>" +
+                html[1]),
+            ]
           : ""
       )
       .then(() => activatePaginationLinks(true))
+      .then(() => activateProjectEditButtons())
       .catch((err) => console.log(err));
   }
 
@@ -178,39 +181,41 @@ document.addEventListener("DOMContentLoaded", () => {
   <a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#project-${
     project.id
   }">
+  
     <p class="h4 text-info">
-      ${
-        project.logo
-          ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
-      src="${project.logo}" alt="${project.title} logo">`
-          : ""
-      }
-       ${project.title}
+    ${
+      project.logo
+        ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
+    src="${project.logo}" alt="${project.title} logo">`
+        : ""
+    }
+       <span id="project_title${project.id}">${project.title}</span>
     </p>
-    <p>${project.description}</p>
+    <p id="project_description${project.id}">${project.description}</p>
   </a>
   </div>
 
-<div class="modal fade" id="project-${
+<div id="project-${
       project.id
-    }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-content" >
       <div class="modal-header">
-          <h5 class="modal-title">
-          ${
-            project.logo
-              ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
-          src="${project.logo}" alt="${project.title} logo"
-          />`
-              : ""
-          }${project.title}</h5>
+      ${
+        project.logo
+          ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
+      src="${project.logo}" alt="${project.title} logo"
+      />`
+          : ""
+      }
+          <h5 class="modal-title" id="projectTitle${project.id}">
+          ${project.title}</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
           </button>
       </div>
-      <div class="modal-body">
-      <p>${project.description}</p>
+      <div class="modal-body" id="project-content${project.id}">
+      <p id="projectDescription${project.id}">${project.description}</p>
       <p><small>Contributors:</p> 
       <ul style="list-style: none">
       ${project.contributors
@@ -227,14 +232,53 @@ document.addEventListener("DOMContentLoaded", () => {
         <p class="mb-0 text-right"><small>Date Created: ${time}</small></p>
       </div>
       <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-info" id="editProject">Edit</a>
+          <button class="btn btn-secondary btn-cancel" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-info editProjectBtn" data-id="${
+            project.id
+          }" id="editProject${project.id}">Edit</a>
       </div>
     </div>
   </div>
 </div>
+`;
+  }
 
-    `;
+  function activateProjectEditButtons() {
+    // get all edit buttons
+    const editProjectButtons = document.querySelectorAll(".editProjectBtn");
+    // add event listeners to each
+    editProjectButtons.forEach((button) =>
+      button.addEventListener("click", (e) => {
+        const id = e.target.dataset.id;
+
+        const projectForm = document.getElementById("updateProjectForm");
+        const projectModal = document.getElementById(`project-content${id}`);
+
+        const title = document.getElementById(`project_title${id}`).innerHTML;
+        const description = document.getElementById(
+          `project_description${id}`
+        ).innerHTML;
+        // pre-populate form
+        document.getElementById("update-project-name").value = title;
+        document.getElementById("update_contributors").value =
+          document.getElementById("update-description").value = description;
+
+        // show form
+        projectForm.style.display = "block";
+
+        // hide edit button
+        button.style.display = "none";
+
+        // refresh data on cancel to clear form page
+        document
+          .querySelectorAll(".btn-cancel")
+          .forEach((cancelButton) =>
+            cancelButton.addEventListener("click", () =>
+              document.getElementById("allProjects").click()
+            )
+          );
+      })
+    );
   }
 
   // active and solved bugs pages
