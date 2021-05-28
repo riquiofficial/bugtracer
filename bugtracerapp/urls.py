@@ -14,7 +14,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("newproject", views.CreateProject.as_view(), name="new_project"),
     path("project/<int:pk>", views.ProjectDetail.as_view(), name="project_detail"),
     path("editproject/<int:pk>", views.UpdateProject.as_view(), name="edit_project"),
     path("search", views.search, name="search_view"),

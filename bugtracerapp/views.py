@@ -126,22 +126,11 @@ class ProjectDetail(LoginRequiredMixin, DetailView):
         return context
 
 
-class CreateProject(LoginRequiredMixin, CreateView):
-    login_url = 'login'
-    model = Project
-    success_url = reverse_lazy('project_list')
-    form_class = ProjectForm
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
 class UpdateProject(LoginRequiredMixin, UpdateView):
     login_url = 'login'
     model = Project
-    success_url = reverse_lazy('project_list')
-    form_class = ProjectForm
+    success_url = reverse_lazy('index')
+    form_class = UpdateProjectForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user

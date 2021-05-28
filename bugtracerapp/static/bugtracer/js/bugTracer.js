@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const bugForm = document.getElementById("registerBugForm");
   const projectForm = document.getElementById("registerProjectForm");
+  const updateProjectForm = document.getElementById("updateProjectForm");
   const jsContent = document.getElementById("jsContent");
   const bugMenu = document.getElementById("bugMenu");
   const projectMenu = document.getElementById("projectMenu");
@@ -23,12 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
     jsContent.style.display = "none";
     bugForm.style.display = "none";
     projectForm.style.display = "none";
+    updateProjectForm.style.display = "none";
     if (page === "registerBug") {
       bugForm.style.display = "block";
     } else if (page == "registerProject") {
       projectForm.style.display = "block";
     } else if (page == "jsContent") {
       jsContent.style.display = "block";
+    } else if (page == "updateProject") {
+      updateProjectForm.style.display = "block";
     }
   }
 
@@ -136,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("allProjects").addEventListener("click", () => {
     showPage("jsContent");
     fetchProjects();
+    history.pushState({ section: "allProjects" }, null, "allProjects");
     closeNavBarMenu();
   });
 
@@ -232,7 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <p class="mb-0 text-right"><small>Date Created: ${time}</small></p>
       </div>
       <div class="modal-footer">
-          <button class="btn btn-secondary btn-cancel" type="button" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-secondary btn-cancel" id="project-cancel-${
+            project.id
+          }" type="button" data-dismiss="modal">Cancel</button>
           <a class="btn btn-info editProjectBtn" data-id="${
             project.id
           }" id="editProject${project.id}">Edit</a>
@@ -251,32 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", (e) => {
         const id = e.target.dataset.id;
 
-        const projectForm = document.getElementById("updateProjectForm");
-        const projectModal = document.getElementById(`project-content${id}`);
-
-        const title = document.getElementById(`project_title${id}`).innerHTML;
-        const description = document.getElementById(
-          `project_description${id}`
-        ).innerHTML;
-        // pre-populate form
-        document.getElementById("update-project-name").value = title;
-        document.getElementById("update_contributors").value =
-          document.getElementById("update-description").value = description;
-
-        // show form
-        projectForm.style.display = "block";
-
-        // hide edit button
-        button.style.display = "none";
-
-        // refresh data on cancel to clear form page
-        document
-          .querySelectorAll(".btn-cancel")
-          .forEach((cancelButton) =>
-            cancelButton.addEventListener("click", () =>
-              document.getElementById("allProjects").click()
-            )
-          );
+        window.location.href = window.location.origin + "/editproject/" + id;
       })
     );
   }
