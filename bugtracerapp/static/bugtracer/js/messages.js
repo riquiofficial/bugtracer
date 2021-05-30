@@ -39,4 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
   </a>
         `;
   }
+
+  function activateMessageEventListener(message) {}
 });

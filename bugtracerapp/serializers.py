@@ -32,11 +32,10 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AlertSerializer(serializers.HyperlinkedModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Alert
-        fields = ['user', 'content', 'timestamp', 'read']
+        fields = ['id', 'content', 'timestamp', 'read']
 
 
 class BugSerializer(serializers.HyperlinkedModelSerializer):

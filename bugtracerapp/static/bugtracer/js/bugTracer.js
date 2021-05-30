@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       mode: "same-origin",
       headers: {
+        Accept: "application/json text/plain, */*",
         "X-CSRFToken": csrf.value,
         "X-Requested-With": "XMLHttpRequest",
       },
@@ -257,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     editProjectButtons.forEach((button) =>
       button.addEventListener("click", (e) => {
         const id = e.target.dataset.id;
-
+        // send to edit page on click
         window.location.href = window.location.origin + "/editproject/" + id;
       })
     );
