@@ -52,7 +52,7 @@ document.getElementById("allProjects").addEventListener("click", () => {
   closeNavBarMenu();
 });
 
-function fetchProjects(pageNumber) {
+export function fetchProjects(pageNumber) {
   fetch(`/api/projects/?format=json${pageNumber ? "&page=" + pageNumber : ""}`)
     .then((response) => response.json())
     // check if data received. Use it to create list of html elements

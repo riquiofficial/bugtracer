@@ -1,3 +1,6 @@
+import { fetchBugs } from "./bugs.js";
+import { fetchProjects } from "./projects.js";
+
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");

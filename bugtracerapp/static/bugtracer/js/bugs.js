@@ -54,17 +54,17 @@ activeBugs.addEventListener("click", () => {
   fetchBugs();
   showPage("jsContent");
   closeNavBarMenu();
-  history.pushState({ section: "activeBugs" }, null, "ActiveBugs");
+  history.pushState({ section: "activeBugs" }, null, "activeBugs");
 });
 
 solved.addEventListener("click", () => {
   fetchBugs(1, true);
   showPage("jsContent");
   closeNavBarMenu();
-  history.pushState({ section: "solved" }, null, "ResolvedBugs");
+  history.pushState({ section: "resolvedBugs" }, null, "resolvedBugs");
 });
 
-function fetchBugs(page = null, solvedBugsPage = false) {
+export function fetchBugs(page = null, solvedBugsPage = false) {
   fetch(
     `/api/${solvedBugsPage ? "solved" : "active"}/?format=json${
       page ? "&page=" + page : ""
