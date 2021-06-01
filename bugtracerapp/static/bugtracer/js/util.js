@@ -1,3 +1,6 @@
+import { fetchBugs } from "./bugs.js";
+import { fetchProjects } from "./projects.js";
+
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
@@ -36,6 +39,7 @@ export function submitForm(csrf, formData) {
   // project form
   const projectName = document.getElementById("project_name");
   const description = document.getElementById("id_description");
+  const contributors = document.getElementById("id_contributors");
   const logo = document.getElementById("id_logo");
 
   fetch(window.location.origin, {
