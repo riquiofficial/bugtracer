@@ -28,7 +28,6 @@ import json
 def index(request):
     bug_form = BugForm
     project_form = ProjectForm
-    update_project_form = UpdateProjectForm
 
     if request.method == "POST":
         data = request.POST
@@ -85,7 +84,7 @@ def index(request):
                 JsonResponse(
                     {"error": "Something else went wrong"}, status=404)
 
-    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, 'update_project_form': update_project_form})
+    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
 
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):

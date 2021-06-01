@@ -8,12 +8,17 @@ import {
 } from "./util.js";
 // project registration page
 
+const baseUrl = window.location.origin;
 const jsContent = document.getElementById("jsContent");
 
 document.getElementById("registerNewProject").addEventListener("click", () => {
   showPage("registerProject");
   closeNavBarMenu();
-  history.pushState({ section: "registerProject" }, null, "registerProject");
+  history.pushState(
+    { section: baseUrl + "/registerProject" },
+    null,
+    baseUrl + "/registerProject"
+  );
 });
 
 const projectName = document.getElementById("project_name");
@@ -48,7 +53,11 @@ document.getElementById("submitProjectForm").addEventListener("click", () => {
 document.getElementById("allProjects").addEventListener("click", () => {
   showPage("jsContent");
   fetchProjects();
-  history.pushState({ section: "allProjects" }, null, "allProjects");
+  history.pushState(
+    { section: baseUrl + "/allProjects" },
+    null,
+    baseUrl + "/allProjects"
+  );
   closeNavBarMenu();
 });
 

@@ -1,25 +1,18 @@
-import { fetchBugs } from "./bugs.js";
-import { fetchProjects } from "./projects.js";
-
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
   const projectForm = document.getElementById("registerProjectForm");
-  const updateProjectForm = document.getElementById("updateProjectForm");
   const jsContent = document.getElementById("jsContent");
 
   jsContent.style.display = "none";
   bugForm.style.display = "none";
   projectForm.style.display = "none";
-  updateProjectForm.style.display = "none";
   if (page === "registerBug") {
     bugForm.style.display = "block";
   } else if (page == "registerProject") {
     projectForm.style.display = "block";
   } else if (page == "jsContent") {
     jsContent.style.display = "block";
-  } else if (page == "updateProject") {
-    updateProjectForm.style.display = "block";
   }
 }
 

@@ -430,19 +430,6 @@
       </div>
     </div>
 
-    <!-- Update Project Page -->
-    <div class="dynamic-content" id="updateProjectForm" style="display: none">
-        <div class="container-fluid" >
-            <h1 class="h3 text-gray-800 my-5">Update Project</h1>
-            <p class="">Please enter some information about this project/app</p>
-          </div>
-          <div class="container-fluid">
-            <form action="" method="PUT" enctype="multipart/form-data">
-              {%csrf_token%} {{update_project_form}}
-              <input id="submitUpdateProjectForm" class="btn btn-primary mt-4" value="Submit" />
-            </form>
-          </div>
-        </div>
 
     <!-- Dynamic Fetched Data -->
     <div class="dynamic-content" id="jsContent">{% block body %} {% endblock %}</div>

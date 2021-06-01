@@ -7,6 +7,7 @@ import {
   formatDate,
 } from "./util.js";
 
+const baseUrl = window.location.origin;
 const jsContent = document.getElementById("jsContent");
 
 // nav menu items
@@ -27,7 +28,11 @@ const heading = (solvedBugsPage = false) => {
 document.getElementById("registerBug").addEventListener("click", () => {
   showPage("registerBug");
   closeNavBarMenu();
-  history.pushState({ section: "registerBug" }, null, "registerBug");
+  history.pushState(
+    { section: baseUrl + "/registerBug" },
+    null,
+    baseUrl + "/registerBug"
+  );
 });
 
 const title = document.getElementById("id_title");
@@ -54,14 +59,22 @@ activeBugs.addEventListener("click", () => {
   fetchBugs();
   showPage("jsContent");
   closeNavBarMenu();
-  history.pushState({ section: "activeBugs" }, null, "activeBugs");
+  history.pushState(
+    { section: baseUrl + "/activeBugs" },
+    null,
+    baseUrl + "/activeBugs"
+  );
 });
 
 solved.addEventListener("click", () => {
   fetchBugs(1, true);
   showPage("jsContent");
   closeNavBarMenu();
-  history.pushState({ section: "resolvedBugs" }, null, "resolvedBugs");
+  history.pushState(
+    { section: baseUrl + "/resolvedBugs" },
+    null,
+    baseUrl + "/resolvedBugs"
+  );
 });
 
 export function fetchBugs(page = null, solvedBugsPage = false) {
