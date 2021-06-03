@@ -20,7 +20,7 @@ from .forms import *
 
 # REST framework
 from .serializers import *
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 import json
 
 
@@ -57,7 +57,7 @@ def index(request):
                     JsonResponse(
                         {"error": "Something else went wrong"}, status=404)
 
-        # if contributors field exists it is project form
+        # if contributors field exists, new project form has been posted
         elif "contributors" in data:
 
             # check if project already exists
@@ -84,6 +84,16 @@ def index(request):
                 JsonResponse(
                     {"error": "Something else went wrong"}, status=404)
 
+    if request.method == 'GET' and 'q' in request.GET:
+        q = request.GET['q']
+        # return 10 matches ordered by priority and solved
+        bugs = Bug.objects.filter(Q(title__contains=q) | Q(
+            content__contains=q)).order_by('priority', 'solved')[:10].values()
+        projects = Project.objects.filter(
+            Q(title__contains=q) | Q(description__contains=q))[:10].values()
+
+        return JsonResponse({'bug_list': list(bugs), 'project_list': list(projects)})
+
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
 
 
@@ -93,6 +103,8 @@ class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     paginate_by = 10
     serializer_class = BugSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content']
 
 
 class Solved(LoginRequiredMixin, viewsets.ModelViewSet):

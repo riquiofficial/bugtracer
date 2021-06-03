@@ -2,6 +2,7 @@ import "./messages.js";
 import "./alerts.js";
 import "./bugs.js";
 import "./projects.js";
+import "./search.js";
 import { showPage } from "./util.js";
 import { fetchBugs } from "./bugs.js";
 import { fetchProjects } from "./projects.js";

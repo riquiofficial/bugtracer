@@ -92,7 +92,7 @@ export function fetchProjects(pageNumber) {
     .catch((err) => console.log(err));
 }
 
-function createProjectHtmlElement(project) {
+export function createProjectHtmlElement(project) {
   const timeUnformatted = new Date(project.date);
   const time = formatDate(timeUnformatted);
 
