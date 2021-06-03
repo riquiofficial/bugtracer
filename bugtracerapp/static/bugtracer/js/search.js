@@ -15,10 +15,41 @@ searchBtn.addEventListener("click", (e) => {
 
     .then((data) => data.results.map((result) => createBugHtmlElement(result)))
 
+    .then((html) =>
+      html
+        ? (jsContent.innerHTML =
+            '<h2 class="mx-2 mt-4 mb-2">Active Bugs</h2>' + html.join(""))
+        : (jsContent.innerHTML = "")
+    )
+    // solved bugs
     .then(
-      (html) =>
-        (jsContent.innerHTML =
-          '<h2 class="mb-3">Active Bugs</h2>' + html.join(""))
+      fetch(`/api/solved/?format=json&search=${query.value}`)
+        .then((response) => response.json())
+        .then((data) =>
+          data.results.map((result) => createBugHtmlElement(result))
+        )
+        .then(
+          (html) =>
+            (jsContent.innerHTML =
+              jsContent.innerHTML +
+              '<h2 class="mx-2 mt-4 mb-2">Solved Bugs</h2>' +
+              html.join(""))
+        )
+    )
+    // search projects
+    .then(
+      fetch(`/api/projects/?format=json&search=${query.value}`)
+        .then((response) => response.json())
+        .then((data) =>
+          data.results.map((result) => createProjectHtmlElement(result))
+        )
+        .then(
+          (html) =>
+            (jsContent.innerHTML =
+              jsContent.innerHTML +
+              '<h2 class="mx-2 mt-4 mb-2">Projects</h2>' +
+              html.join(""))
+        )
     )
     .then(showPage("jsContent"))
     .catch((err) => console.log(err));

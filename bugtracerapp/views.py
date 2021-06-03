@@ -104,7 +104,7 @@ class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     serializer_class = BugSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'content']
+    search_fields = ['title', 'content', 'author__username']
 
 
 class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -114,6 +114,8 @@ class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
     paginate_by = 10
     serializer_class = BugSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content', 'author__username']
 
 
 class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -123,6 +125,8 @@ class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
     paginate_by = 10
     serializer_class = ProjectDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'description', 'contributors__username']
 
 
 class ProjectDetail(LoginRequiredMixin, DetailView):
