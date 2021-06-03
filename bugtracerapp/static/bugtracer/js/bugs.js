@@ -106,7 +106,7 @@ export function fetchBugs(page = null, solvedBugsPage = false) {
     .catch((err) => console.log(err));
 }
 
-function createBugHtmlElement(bug) {
+export function createBugHtmlElement(bug) {
   // convert date to readable format
   const timeUnformatted = new Date(bug.date);
   const lastModifiedUnformatted = new Date(bug.last_modified);
