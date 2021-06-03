@@ -165,7 +165,7 @@ export function createProjectHtmlElement(project) {
 `;
 }
 
-function activateProjectEditButtons() {
+export function activateProjectEditButtons() {
   // get all edit buttons
   const editProjectButtons = document.querySelectorAll(".editProjectBtn");
   // add event listeners to each
