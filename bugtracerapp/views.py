@@ -84,16 +84,6 @@ def index(request):
                 JsonResponse(
                     {"error": "Something else went wrong"}, status=404)
 
-    if request.method == 'GET' and 'q' in request.GET:
-        q = request.GET['q']
-        # return 10 matches ordered by priority and solved
-        bugs = Bug.objects.filter(Q(title__contains=q) | Q(
-            content__contains=q)).order_by('priority', 'solved')[:10].values()
-        projects = Project.objects.filter(
-            Q(title__contains=q) | Q(description__contains=q))[:10].values()
-
-        return JsonResponse({'bug_list': list(bugs), 'project_list': list(projects)})
-
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
 
 
@@ -215,17 +205,3 @@ class Messages(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Message.objects.filter(receiver=self.request.user).order_by('-timestamp')
-
-
-def search(request):
-    if request.method == 'GET' and 'q' in request.GET:
-        q = request.GET['q']
-        # return 10 matches ordered by priority and solved
-        bugs = Bug.objects.filter(Q(title__contains=q) | Q(
-            content__contains=q)).order_by('priority', 'solved')[:10]
-        projects = Project.objects.filter(
-            Q(title__contains=q) | Q(description__contains=q))[:10]
-
-        return render(request, 'bugtracerapp/searched.html', {'bug_list': bugs, 'project_list': projects})
-    else:
-        return render(request, '404.html')
