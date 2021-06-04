@@ -33,17 +33,16 @@ function addAlertClickEvent() {
 
       fetch(`${baseUrl}/api/alerts/${id}/?format=json`)
         .then((response) => response.json())
-        .then((result) => console.log(result))
         .then(
           fetch(`${baseUrl}/api/alerts/${id}/`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
               Accept: "application/json, text/plain, */*",
               "Content-Type": "application/json",
               "X-CSRFToken": csrf.value,
             },
             // mark read as true
-            body: JSON.stringify({ content: content.innerHTML, read: true }),
+            body: JSON.stringify({ read: true }),
           })
             .catch((err) => console.log(err))
             // update unread counter and bold text as read

@@ -41,8 +41,17 @@ class AlertSerializer(serializers.HyperlinkedModelSerializer):
 class BugSerializer(serializers.HyperlinkedModelSerializer):
     author = UserSerializer()
     project = ProjectSerializer()
+    closed_by = UserSerializer()
 
     class Meta:
         model = Bug
         fields = ['id', 'title', 'author', 'content', 'date',
-                  'priority', 'project', 'last_modified', 'solved']
+                  'priority', 'project', 'last_modified', 'solved', 'solved_text', 'closed_by']
+
+    def update(self, instance, validated_data):
+        instance.solved = validated_data.get('solved', instance.solved)
+        instance.solved_text = validated_data.get(
+            'solved_text', instance.solved_text)
+        instance.closed_by = self.context['request'].user
+        instance.save()
+        return instance

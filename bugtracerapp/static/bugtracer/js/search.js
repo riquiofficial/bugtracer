@@ -1,5 +1,5 @@
 import { showPage } from "./util.js";
-import { createBugHtmlElement } from "./bugs.js";
+import { createBugHtmlElement, activateResolveButtons } from "./bugs.js";
 import {
   createProjectHtmlElement,
   activateProjectEditButtons,
@@ -25,8 +25,9 @@ searchBtn.addEventListener("click", (e) => {
         (jsContent.innerHTML =
           '<h2 class="mx-2 mt-4 mb-2">Active Bugs</h2>' + html.join(""))
     )
-    // search solved bugs
+    .then(() => activateResolveButtons())
 
+    // search solved bugs
     .then(
       fetch(`/api/solved/?format=json&search=${query.value}`)
         .then((response) => response.json())

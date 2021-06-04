@@ -103,6 +103,7 @@ export function fetchBugs(page = null, solvedBugsPage = false) {
         : ""
     )
     .then(() => activatePaginationLinks())
+    .then(() => activateResolveButtons())
     .catch((err) => console.log(err));
 }
 
@@ -138,7 +139,7 @@ export function createBugHtmlElement(bug) {
 
   //create element with data from api
   return `
-  <div class="card shadow">
+  <div class="card shadow" id="div${id}">
     <a href="#a${id}" class="d-block card-header py-3 collapsed" data-toggle="collapse" 
       role="button" aria-expanded="false" aria-controls="a${id}">
       <h6 class="m-0 font-weight-bold text-${className}">${bug.title}
@@ -169,10 +170,21 @@ export function createBugHtmlElement(bug) {
           <p class="ml-4">${bug.content}</p>
           ${
             bug.solved
-              ? ""
+              ? `<p>Resolved by ${
+                  bug.closed_by.profile_picture
+                    ? `<img width="30px" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.closed_by.profile_picture}" alt="${bug.closed_by.username}'s profile picture">`
+                    : ""
+                }<a href="/profile/${bug.closed_by.username}">${
+                  bug.closed_by.username
+                }</a>:</p>
+                ${
+                  bug.solved_text
+                    ? `<p class="ml-4">${bug.solved_text}</p>`
+                    : ""
+                }`
               : `
-          <div class="resolved ml-4">
-          <button id="resolvedButton" class="btn btn-sm btn-success">Resolve</button>
+          <div class="resolved ml-4" id="resolvedDiv${id}">
+          <button data-id="${id}" class="btn btn-sm btn-success btn-resolve">Resolve</button>
           </div>
           `
           }
@@ -181,7 +193,13 @@ export function createBugHtmlElement(bug) {
         <div class="text-right">
           <p class="mb-0">
             <small>Submitted by <a href="/profile/${bug.author.username}">
-            </small>${bug.author.username}
+            </small>
+            ${
+              bug.author.profile_picture
+                ? `<img width="30px" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.author.profile_picture}" alt="${bug.author.username}'s profile picture">`
+                : ""
+            }
+            ${bug.author.username}
             </a>
             <small>on ${time}</small>
           </p>
@@ -194,4 +212,46 @@ export function createBugHtmlElement(bug) {
     </div>
   </div>
   `;
+}
+
+export function activateResolveButtons() {
+  const resolveButtons = document.querySelectorAll(".btn-resolve");
+  resolveButtons.forEach((button) =>
+    button.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      const baseUrl = window.location.origin;
+      const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+      const resolved = document.getElementById(`resolvedDiv${id}`);
+      const bug = document.getElementById(`div${id}`);
+      // change to text box
+      resolved.innerHTML = `<p>How did you resolve this bug?</p>
+      <textarea maxlength="500" id="textarea${id}"></textarea>
+      <button id="submit${id}" class="btn btn-success btn-sm mx-1">Submit</button>
+      <button id="cancel${id}" class="btn btn-secondary btn-sm mx-1">Cancel</button>`;
+
+      const content = document.getElementById(`textarea${id}`);
+      const submit = document.getElementById(`submit${id}`);
+      const cancel = document.getElementById(`cancel${id}`);
+
+      const updateBug = () =>
+        fetch(baseUrl + `/api/active/${id}/`, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrf.value,
+          },
+          // mark read as true
+          body: JSON.stringify({ solved_text: content.value, solved: true }),
+        })
+          .then(() => (bug.style.display = "none"))
+          .catch((err) => console.log(err));
+
+      submit.addEventListener("click", () => updateBug());
+      cancel.addEventListener("click", () => {
+        resolved.innerHTML = `<button data-id="${id}" class="btn btn-sm btn-success btn-resolve">Resolve</button>`;
+        activateResolveButtons();
+      });
+    })
+  );
 }

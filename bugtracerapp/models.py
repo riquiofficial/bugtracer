@@ -45,6 +45,9 @@ class Bug(models.Model):
     priority = models.IntegerField(
         default=3, validators=[MaxValueValidator(3), MinValueValidator(1)])
     solved = models.BooleanField(default=False)
+    solved_text = models.CharField(max_length=500, blank=True, null=True)
+    closed_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="closed_by", blank=True, null=True)
     project = models.ForeignKey(
         "Project", on_delete=models.CASCADE, blank=True, null=True)
 
