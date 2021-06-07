@@ -9,7 +9,9 @@ const fetchMessages = fetch("/api/messages/?format=json")
       : (messages.innerHTML = "No Messages...")
   )
   .then((html) =>
-    html !== "No Messages..." ? (messages.innerHTML = html.join("")) : ""
+    html !== "No Messages..."
+      ? (messages.innerHTML = html.slice(0, 5).join(""))
+      : ""
   )
   .catch((err) => console.log(err));
 

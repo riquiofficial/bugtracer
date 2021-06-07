@@ -170,16 +170,16 @@ export function createBugHtmlElement(bug) {
           <p class="ml-4">${bug.content}</p>
           ${
             bug.solved
-              ? `<p>Resolved by ${
+              ? `<hr /><p>Resolved by ${
                   bug.closed_by.profile_picture
                     ? `<img width="30px" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.closed_by.profile_picture}" alt="${bug.closed_by.username}'s profile picture">`
                     : ""
                 }<a href="/profile/${bug.closed_by.username}">${
                   bug.closed_by.username
-                }</a>:</p>
+                }</a> who wrote:</p>
                 ${
                   bug.solved_text
-                    ? `<p class="ml-4">${bug.solved_text}</p>`
+                    ? `<p class="ml-4 mb-5 mr-4"><small>"${bug.solved_text}"</small></p>`
                     : ""
                 }`
               : `
