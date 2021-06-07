@@ -23,6 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path === "/allProjects") {
     fetchProjects();
     showPage("jsContent");
+  } else if (path == "/messages") {
+    fetchMessages();
+    showPage("jsContent");
   }
 
   // browser history back/forward
@@ -43,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
       showPage(prevPage.section);
     } else if (prevPage.section == "allProjects") {
       fetchProjects();
+      showPage("jsContent");
+    } else if (prevPage.section == "messages") {
+      fetchMessages();
       showPage("jsContent");
     }
   };

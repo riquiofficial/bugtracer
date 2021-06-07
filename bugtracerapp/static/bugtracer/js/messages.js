@@ -1,5 +1,8 @@
+import { showPage } from "./util.js";
+
 const messages = document.getElementById("messages");
 const unread = document.getElementById("message-counter");
+const jsContent = document.getElementById("jsContent");
 
 const fetchMessages = fetch("/api/messages/?format=json")
   .then((response) => response.json())
@@ -10,7 +13,9 @@ const fetchMessages = fetch("/api/messages/?format=json")
   )
   .then((html) =>
     html !== "No Messages..."
-      ? (messages.innerHTML = html.slice(0, 5).join(""))
+      ? messagePage
+        ? (jsContent.innerHTML = html.join(""))
+        : (messages.innerHTML = html.slice(0, 5).join(""))
       : ""
   )
   .catch((err) => console.log(err));
@@ -40,3 +45,15 @@ function createHtmlMessage(obj) {
   </a>
         `;
 }
+
+document.getElementById("messagePage").addEventListener("click", () => {
+  const baseUrl = window.location.origin;
+
+  showPage("jsContent");
+
+  history.pushState(
+    { section: baseUrl + "/messages" },
+    null,
+    baseUrl + "/messages"
+  );
+});

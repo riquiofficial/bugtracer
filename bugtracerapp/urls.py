@@ -15,11 +15,12 @@ urlpatterns = [
 
     # dynamic javascript pages
     path('activeBugs', views.index, name="index"),
-    path('resolvedBugs', views.index, name="index"),
-    path('registerBug', views.index, name="index"),
-    path('allProjects', views.index, name="index"),
-    path('registerProject', views.index, name="index"),
-    path('search', views.index, name="index"),
+    path('resolvedBugs', views.index, name="resolved_bugs"),
+    path('registerBug', views.index, name="register_bug"),
+    path('allProjects', views.index, name="projects"),
+    path('registerProject', views.index, name="register_project"),
+    path('search', views.index, name="search"),
+    path('messages', views.index, name="messages"),
 
     # django rest framework
     path('api/', include(router.urls)),
