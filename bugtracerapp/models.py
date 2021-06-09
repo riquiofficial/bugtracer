@@ -22,6 +22,12 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
+    def get_user_profiles(self):
+        user_list = []
+        for user in self.receiver.all():
+            user_list.append(user)
+        return user_list
+
     def __str__(self):
         return f"{self.id}: message sent by {self.sender} to {[receiver.username for receiver in self.receiver.all()]} on {self.timestamp.strftime('%d %B, %Y, %H:%M')}"
 

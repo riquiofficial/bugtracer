@@ -6,6 +6,7 @@ import "./search.js";
 import { showPage } from "./util.js";
 import { fetchBugs } from "./bugs.js";
 import { fetchProjects } from "./projects.js";
+import { fetchMessagesPage } from "./messages.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // check browser url in case of refresh
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchProjects();
     showPage("jsContent");
   } else if (path == "/messages") {
-    fetchMessages();
+    fetchMessagesPage();
     showPage("jsContent");
   }
 
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchProjects();
       showPage("jsContent");
     } else if (prevPage.section == "messages") {
-      fetchMessages();
+      fetchMessagesPage();
       showPage("jsContent");
     }
   };

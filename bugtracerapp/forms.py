@@ -11,7 +11,7 @@ class BugForm(forms.ModelForm):
         fields = ['title', 'content', 'priority', 'project']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2'}),
-            'content': forms.TextInput(attrs={'class': 'form-control mb-2'}),
+            'content': forms.Textarea(attrs={'class': 'form-control mb-2'}),
             'priority': forms.TextInput(attrs={'class': 'form-control mb-2'}),
             'project': forms.Select(attrs={'class': 'form-control mb-2'}),
         }
@@ -25,7 +25,7 @@ class ProjectForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'project_name'}),
             'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2'}),
-            'description': forms.TextInput(attrs={'class': 'form-control mb-2'}),
+            'description': forms.Textarea(attrs={'class': 'form-control mb-2'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'})
         }
 
@@ -38,7 +38,7 @@ class UpdateProjectForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'update-project-name'}),
             'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2', 'id': 'update-contributors'}),
-            'description': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'update-description'}),
+            'description': forms.Textarea(attrs={'class': 'form-control mb-2', 'id': 'update-description'}),
             'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2', 'id': 'update-logo'})
         }
 
@@ -63,5 +63,5 @@ class EditProfileForm(forms.ModelForm):
         fields = ['profile_picture', 'bio']
         widgets = {
             'profile_picture': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'}),
-            'bio': forms.TextInput(attrs={'class': 'form-control mb-2'})
+            'bio': forms.Textarea(attrs={'class': 'form-control mb-2'})
         }

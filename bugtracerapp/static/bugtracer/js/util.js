@@ -1,4 +1,5 @@
 import { fetchBugs } from "./bugs.js";
+import { fetchMessagesPage } from "./messages.js";
 import { fetchProjects } from "./projects.js";
 
 // dynamically show which div to display
@@ -95,9 +96,10 @@ export function createPagination(count) {
 export function activatePaginationLinks(projectsPage = false) {
   const pageButtons = document.querySelectorAll(".page-link");
   const solvedHeading = document.getElementById("bugHeading");
+  const messagesHeading = document.getElementById("messagesHeading");
   let solvedPagination = false;
 
-  // check if resolved bugs request by checking title of page
+  // check if active or resolved bugs request by checking title of page
   if (solvedHeading) {
     solvedPagination = solvedHeading.innerHTML[0] === "S";
   }
@@ -108,13 +110,19 @@ export function activatePaginationLinks(projectsPage = false) {
       "click",
       // if solved page, "solved=true" passes into fetchBugs to get solved data
       // using solvedPagination conditional
-      (e) =>
+      (e) => {
         // check whether pagination being loaded for project page or bug page
-        projectsPage
-          ? fetchProjects(e.target.innerHTML)
-          : fetchBugs(e.target.innerHTML, solvedPagination),
-      // scroll to top when data loaded on page
-      document.getElementsByClassName("scroll-to-top")[0].click()
+        if (projectsPage) {
+          fetchProjects(e.target.innerHTML);
+        } else if (solvedPagination) {
+          fetchBugs(e.target.innerHTML, solvedPagination);
+        } else if (messagesHeading) {
+          fetchMessagesPage(e.target.innerHTML);
+        }
+
+        // scroll to top when data loaded on page
+        document.getElementsByClassName("scroll-to-top")[0].click();
+      }
     );
   });
 }

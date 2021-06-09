@@ -25,10 +25,12 @@ class ProjectDetailSerializer(serializers.HyperlinkedModelSerializer):
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = UserSerializer()
+    receiver = UserSerializer(
+        source='get_user_profiles', many=True)
 
     class Meta:
         model = Message
-        fields = ['sender', 'content', 'timestamp', 'read']
+        fields = ['id', 'sender', 'content', 'timestamp', 'read', 'receiver']
 
 
 class AlertSerializer(serializers.HyperlinkedModelSerializer):
