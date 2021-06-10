@@ -35,30 +35,9 @@ function createHtmlMessage(message) {
     // if 10 or more unread, render "10+"
     unread.innerHTML == 10 ? (unread.innerHTML = "10+") : "";
   }
-  return `
-      <a data-id="${message.id}" data-toggle="modal" data-target="#message${
-    message.id
-  }" class="message-list-item dropdown-item d-flex align-items-center">
-      <div data-id="${message.id}" class="dropdown-list-image mr-3">
-          <img data-id="${message.id}" class="rounded-circle" src="${
-    message.sender.profile_picture
-      ? message.sender.profile_picture
-      : "/media/profile-pics/undraw_profile.svg"
-  }"
-              alt="">
-          <div class="status-indicator bg-success"></div>
-      </div>
-      <div class="${message.read ? "" : "font-weight-bold"}">
-          <div data-id="${message.id}" class="text-truncate">${
-    message.content
-  }</div>
-          <div data-id="${message.id}" class="small text-gray-500">${
-    message.sender.username
-  } · ${time}</div>
-      </div>
-  </a>
 
-  <div id="navMessage${
+  const container = document.getElementById("messageModals");
+  container.innerHTML += `<div id="navmessage${
     message.id
   }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -102,16 +81,41 @@ function createHtmlMessage(message) {
         <p class="mb-0 text-right"><small>Sent: ${time}</small></p>
       </div>
       <div class="modal-footer">
-          <button class="btn btn-secondary btn-cancel" id="project-cancel-${
+          <button class="btn btn-secondary btn-cancel" id="message-cancel-${
             message.id
           }" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-info editProjectBtn" data-id="${
+          <a class="btn btn-info replyMessageButton" data-id="${
             message.id
           }" id="reply-${message.id}">Reply</a>
       </div>
     </div>
   </div>
-</div>
+</div>`;
+
+  return `
+      <a data-id="${message.id}" data-toggle="modal" data-target="#navmessage${
+    message.id
+  }" class="${
+    message.read ? "" : "font-weight-bold"
+  } message-list-item dropdown-item d-flex align-items-center">
+      <div data-id="${message.id}" class="dropdown-list-image mr-3">
+          <img data-id="${message.id}" class="rounded-circle" src="${
+    message.sender.profile_picture
+      ? message.sender.profile_picture
+      : "/media/profile-pics/undraw_profile.svg"
+  }"
+              alt="">
+          <div class="status-indicator bg-success"></div>
+      </div>
+      <div>
+          <div data-id="${message.id}" class="${
+    message.read ? "" : "font-weight-bold"
+  } text-truncate">${message.content}</div>
+          <div data-id="${message.id}" class="${
+    message.read ? "" : "font-weight-bold"
+  } small text-gray-500">${message.sender.username} · ${time}</div>
+      </div>
+  </a>
         `;
 }
 
@@ -180,10 +184,10 @@ const createHtmlMessagePage = (message) => {
         <p class="mb-0 text-right"><small>Sent: ${time}</small></p>
       </div>
       <div class="modal-footer">
-          <button class="btn btn-secondary btn-cancel" id="project-cancel-${
+          <button class="btn btn-secondary btn-cancel" id="alert-cancel-${
             message.id
           }" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-info editProjectBtn" data-id="${
+          <a class="btn btn-info replyMessageButton" data-id="${
             message.id
           }" id="reply-${message.id}">Reply</a>
       </div>
@@ -235,6 +239,7 @@ function activateMessagesClickEvent() {
   // for each message, update read to true
   [...messages].forEach((message) =>
     message.addEventListener("click", (e) => {
+      console.log(e.target.classList);
       const id = e.target.dataset.id;
       const baseUrl = window.location.origin;
       const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];

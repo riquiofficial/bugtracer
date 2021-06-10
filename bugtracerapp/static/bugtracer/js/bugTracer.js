@@ -7,6 +7,7 @@ import { showPage } from "./util.js";
 import { fetchBugs } from "./bugs.js";
 import { fetchProjects } from "./projects.js";
 import { fetchMessagesPage } from "./messages.js";
+import { fetchAlertsPage } from "./alerts.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // check browser url in case of refresh
@@ -26,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     showPage("jsContent");
   } else if (path == "/messages") {
     fetchMessagesPage();
+    showPage("jsContent");
+  } else if (path == "/alerts") {
+    fetchAlertsPage();
     showPage("jsContent");
   }
 
@@ -50,6 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
       showPage("jsContent");
     } else if (prevPage.section == "messages") {
       fetchMessagesPage();
+      showPage("jsContent");
+    } else if (prevPage.section == "alerts") {
+      fetchAlertsPage();
       showPage("jsContent");
     }
   };
