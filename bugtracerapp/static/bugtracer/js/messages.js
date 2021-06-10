@@ -239,23 +239,29 @@ function activateMessagesClickEvent() {
       const baseUrl = window.location.origin;
       const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
-      fetch(`${baseUrl}/api/messages/${id}/`, {
-        method: "PATCH",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrf.value,
-        },
-        // mark read as true
-        body: JSON.stringify({ read: true }),
-      })
-        .then(e.target.classList.remove("list-group-item-primary"))
-        .then(e.target.classList.remove("font-weight-bold"))
-        .then(() => [
-          unread.innerHTML--,
-          unread.innerHTML < 1 ? (unread.style.display = "none") : "",
-        ])
-        .catch((err) => console.log(err));
+      // if unread message, send request to make read and remove unread styles
+      if (
+        e.target.classList.contains("list-group-item-primary") ||
+        e.target.classList.contains("font-weight-bold")
+      ) {
+        fetch(`${baseUrl}/api/messages/${id}/`, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrf.value,
+          },
+          // mark read as true
+          body: JSON.stringify({ read: true }),
+        })
+          .then(e.target.classList.remove("list-group-item-primary"))
+          .then(e.target.classList.remove("font-weight-bold"))
+          .then(() => [
+            unread.innerHTML--,
+            unread.innerHTML < 1 ? (unread.style.display = "none") : "",
+          ])
+          .catch((err) => console.log(err));
+      }
     })
   );
 }
