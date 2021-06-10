@@ -41,7 +41,8 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
         else:
             return False
 
-    def update(self, instance):
+    def update(self, instance, validated_data):
+
         instance.read.add(self.context['request'].user)
         instance.save()
         return instance

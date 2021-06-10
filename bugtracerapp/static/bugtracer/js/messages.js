@@ -18,6 +18,11 @@ export function fetchMessages() {
         ? (messages.innerHTML = html.slice(0, 5).join(""))
         : ""
     )
+    .then(
+      setTimeout(() => {
+        activateMessagesClickEvent();
+      }, 1500)
+    )
     .catch((err) => console.log(err));
 }
 fetchMessages();
@@ -31,31 +36,91 @@ function createHtmlMessage(message) {
     unread.innerHTML == 10 ? (unread.innerHTML = "10+") : "";
   }
   return `
-      <a class="dropdown-item d-flex align-items-center" href="#">
-      <div class="dropdown-list-image mr-3">
-          <img class="rounded-circle" src="${
-            message.sender.profile_picture
-              ? message.sender.profile_picture
-              : "/media/profile-pics/undraw_profile.svg"
-          }"
+      <a data-id="${message.id}" data-toggle="modal" data-target="#message${
+    message.id
+  }" class="message-list-item dropdown-item d-flex align-items-center">
+      <div data-id="${message.id}" class="dropdown-list-image mr-3">
+          <img data-id="${message.id}" class="rounded-circle" src="${
+    message.sender.profile_picture
+      ? message.sender.profile_picture
+      : "/media/profile-pics/undraw_profile.svg"
+  }"
               alt="">
           <div class="status-indicator bg-success"></div>
       </div>
-      <div class="font-weight-bold">
-          <div class="text-truncate">${message.content}</div>
-          <div class="small text-gray-500">${
-            message.sender.username
-          } · ${time}</div>
+      <div class="${message.read ? "" : "font-weight-bold"}">
+          <div data-id="${message.id}" class="text-truncate">${
+    message.content
+  }</div>
+          <div data-id="${message.id}" class="small text-gray-500">${
+    message.sender.username
+  } · ${time}</div>
       </div>
   </a>
+
+  <div id="navMessage${
+    message.id
+  }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" >
+      <div class="modal-header">
+      ${
+        message.sender.profile_picture
+          ? `<img class="mr-4 rounded-circle" style="width: 40px; height: 40px"
+      src="${
+        message.sender.profile_picture
+          ? message.sender.profile_picture
+          : "/media/profile-pics/undraw_profile.svg"
+      }" alt="${message.sender.username} profile picture"
+      />`
+          : ""
+      }
+          <h5 class="modal-title">
+          ${message.sender.username}</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+          </button>
+      </div>
+      <div class="modal-body" id="message-content-${message.id}">
+      <p>${message.content}</p>
+      <p class="mb-1"><small>recipients:</p> 
+      <ul style="list-style: none">
+      ${message.receiver
+        .map(
+          (receiver) => `<li style="padding: 3px"><img src="${
+            receiver.profile_picture
+              ? receiver.profile_picture
+              : "/media/profile-pics/undraw_profile.svg"
+          }" 
+      width="40px" height="40px" class="rounded-circle" alt="${
+        receiver.username
+      }'s profile picture">
+      ${receiver.username}</li>`
+        )
+        .join("")} 
+        </ul></small>
+        <p class="mb-0 text-right"><small>Sent: ${time}</small></p>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-secondary btn-cancel" id="project-cancel-${
+            message.id
+          }" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-info editProjectBtn" data-id="${
+            message.id
+          }" id="reply-${message.id}">Reply</a>
+      </div>
+    </div>
+  </div>
+</div>
         `;
 }
 
 const createHtmlMessagePage = (message) => {
   const time = new Date(message.timestamp).toDateString();
   return `
-  <a data-toggle="modal" data-target="#message-${message.id}">
-  <li id="message-${message.id}" data-id="${
+  <a data-toggle="modal" data-target="#message${message.id}" id="message-${
+    message.id
+  }" data-id="${
     message.id
   }" class="list-group-item list-group-item-action message-list-item ${
     message.read ? "" : "list-group-item-primary"
@@ -69,9 +134,9 @@ const createHtmlMessagePage = (message) => {
     0,
     20
   )}...<br>
-   <small><i>${time}</i></small></li>
+   <small><i>${time}</i></small>
    </a>
-  <div id="message-${
+  <div id="message${
     message.id
   }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -167,12 +232,10 @@ export function fetchMessagesPage(pageNumber) {
 
 function activateMessagesClickEvent() {
   const messages = document.getElementsByClassName("message-list-item");
-  console.log("activated");
   // for each message, update read to true
   [...messages].forEach((message) =>
     message.addEventListener("click", (e) => {
       const id = e.target.dataset.id;
-      console.log(id);
       const baseUrl = window.location.origin;
       const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
@@ -186,11 +249,8 @@ function activateMessagesClickEvent() {
         // mark read as true
         body: JSON.stringify({ read: true }),
       })
-        .then(
-          document
-            .getElementById(`message-${id}`)
-            .classList.remove("list-group-item-primary")
-        )
+        .then(e.target.classList.remove("list-group-item-primary"))
+        .then(e.target.classList.remove("font-weight-bold"))
         .then(() => [
           unread.innerHTML--,
           unread.innerHTML < 1 ? (unread.style.display = "none") : "",
