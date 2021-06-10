@@ -7,12 +7,16 @@ from .models import User, Bug, Project
 class BugForm(forms.ModelForm):
 
     class Meta:
+        CHOICES = (('1', 'High Priority'),
+                   ('2', 'Medium Priority'),
+                   ('3', 'Low Priority'))
+
         model = Bug
         fields = ['title', 'content', 'priority', 'project']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2'}),
             'content': forms.Textarea(attrs={'class': 'form-control mb-2'}),
-            'priority': forms.TextInput(attrs={'class': 'form-control mb-2'}),
+            'priority': forms.Select(attrs={'class': 'form-control mb-2'}, choices=CHOICES),
             'project': forms.Select(attrs={'class': 'form-control mb-2'}),
         }
 

@@ -63,6 +63,7 @@ function createHtmlAlert(obj) {
   //check if already read for styling
   if (obj.read == false) {
     unread.innerHTML++;
+    unread.innerHTML == 10 ? (unread.innerHTML = "10+") : "";
   }
 
   //create element

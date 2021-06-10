@@ -27,6 +27,8 @@ function createHtmlMessage(message) {
   const time = new Date(message.timestamp).toDateString();
   if (message.read == false) {
     unread.innerHTML = Number(unread.innerHTML) + 1;
+    // if 10 or more unread, render "10+"
+    unread.innerHTML == 10 ? (unread.innerHTML = "10+") : "";
   }
   return `
       <a class="dropdown-item d-flex align-items-center" href="#">
@@ -53,8 +55,10 @@ const createHtmlMessagePage = (message) => {
   const time = new Date(message.timestamp).toDateString();
   return `
   <a data-toggle="modal" data-target="#message-${message.id}">
-  <li class="list-group-item list-group-item-action ${
-    message.read ? "list-group-item-dark" : ""
+  <li id="message-${message.id}" data-id="${
+    message.id
+  }" class="list-group-item list-group-item-action message-list-item ${
+    message.read ? "" : "list-group-item-primary"
   }"> From <strong><img class="rounded-circle" style="width: 30px; height: 30px; margin: 5px"
   src="${
     message.sender.profile_picture
@@ -152,8 +156,48 @@ export function fetchMessagesPage(pageNumber) {
         ? (messageList.innerHTML = html[0].join("") + html[1])
         : ""
     )
-    .then(activatePaginationLinks())
+    .then(
+      setTimeout(() => {
+        activatePaginationLinks();
+        activateMessagesClickEvent();
+      }, 1500)
+    )
     .catch((err) => console.log(err));
+}
+
+function activateMessagesClickEvent() {
+  const messages = document.getElementsByClassName("message-list-item");
+  console.log("activated");
+  // for each message, update read to true
+  [...messages].forEach((message) =>
+    message.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      console.log(id);
+      const baseUrl = window.location.origin;
+      const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+      fetch(`${baseUrl}/api/messages/${id}/`, {
+        method: "PATCH",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf.value,
+        },
+        // mark read as true
+        body: JSON.stringify({ read: true }),
+      })
+        .then(
+          document
+            .getElementById(`message-${id}`)
+            .classList.remove("list-group-item-primary")
+        )
+        .then(() => [
+          unread.innerHTML--,
+          unread.innerHTML < 1 ? (unread.style.display = "none") : "",
+        ])
+        .catch((err) => console.log(err));
+    })
+  );
 }
 
 // more messages page

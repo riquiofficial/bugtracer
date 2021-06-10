@@ -20,9 +20,10 @@ class Message(models.Model):
     receiver = models.ManyToManyField(User, related_name="received_messages")
     content = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
-    read = models.BooleanField(default=False)
+    read = models.ManyToManyField(User, related_name="read")
 
-    def get_user_profiles(self):
+    # for use by message serializer to get multiple received messages
+    def get_user_received_profiles(self):
         user_list = []
         for user in self.receiver.all():
             user_list.append(user)
