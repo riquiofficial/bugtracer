@@ -79,7 +79,7 @@ export function fetchProjects(pageNumber) {
         ? [
             (jsContent.innerHTML =
               `<div class="container-fluid">
-          <h1 class="h1 text-gray-800 my-5">Projects</h1>
+          <h1 class="dynamic-content h1 text-gray-800 my-5">Projects</h1>
         </div><div class="list-group>` +
               html[0].join("") +
               "</div>" +
@@ -97,8 +97,8 @@ export function createProjectHtmlElement(project) {
   const time = formatDate(timeUnformatted);
 
   return `
-<div className="list">
-  <a class="list-group-item list-group-item-action" data-toggle="modal" data-target="#project-${
+<div class="dynamic-content">
+  <a class=" dynamic-content list-group-item list-group-item-action" data-toggle="modal" data-target="#project-${
     project.id
   }">
   

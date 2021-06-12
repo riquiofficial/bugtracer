@@ -1,22 +1,28 @@
 import { fetchBugs } from "./bugs.js";
 import { fetchMessagesPage } from "./messages.js";
 import { fetchProjects } from "./projects.js";
+import { fetchAlertsPage } from "./alerts.js";
 
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
   const projectForm = document.getElementById("registerProjectForm");
   const jsContent = document.getElementById("jsContent");
+  const messagePage = document.getElementById("messageForm");
 
   jsContent.style.display = "none";
   bugForm.style.display = "none";
   projectForm.style.display = "none";
+  messagePage.style.display = "none";
+
   if (page === "registerBug") {
     bugForm.style.display = "block";
   } else if (page == "registerProject") {
     projectForm.style.display = "block";
   } else if (page == "jsContent") {
     jsContent.style.display = "block";
+  } else if (page == "messagePage") {
+    messagePage.style.display = "block";
   }
 }
 
@@ -97,6 +103,7 @@ export function activatePaginationLinks(projectsPage = false) {
   const pageButtons = document.querySelectorAll(".page-link");
   const solvedHeading = document.getElementById("bugHeading");
   const messagesHeading = document.getElementById("messagesHeading");
+  const alertsHeading = document.getElementById("alertsHeading");
   let solvedPagination = false;
 
   // check if active or resolved bugs request by checking title of page
@@ -114,10 +121,12 @@ export function activatePaginationLinks(projectsPage = false) {
         // check whether pagination being loaded for project page or bug page
         if (projectsPage) {
           fetchProjects(e.target.innerHTML);
-        } else if (solvedPagination) {
+        } else if (solvedHeading) {
           fetchBugs(e.target.innerHTML, solvedPagination);
         } else if (messagesHeading) {
           fetchMessagesPage(e.target.innerHTML);
+        } else if (alertsHeading) {
+          fetchAlertsPage(e.target.innerHTML);
         }
 
         // scroll to top when data loaded on page

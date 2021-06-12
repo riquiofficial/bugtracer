@@ -21,6 +21,7 @@ export function fetchMessages() {
     .then(
       setTimeout(() => {
         activateMessagesClickEvent();
+        activateReplyButtons();
       }, 1500)
     )
     .catch((err) => console.log(err));
@@ -110,7 +111,7 @@ function createHtmlMessage(message) {
       <div>
           <div data-id="${message.id}" class="${
     message.read ? "" : "font-weight-bold"
-  } text-truncate">${message.content}</div>
+  } text-truncate" id="messageContent${message.id}" >${message.content}</div>
           <div data-id="${message.id}" class="${
     message.read ? "" : "font-weight-bold"
   } small text-gray-500">${message.sender.username} · ${time}</div>
@@ -122,11 +123,9 @@ function createHtmlMessage(message) {
 const createHtmlMessagePage = (message) => {
   const time = new Date(message.timestamp).toDateString();
   return `
-  <a data-toggle="modal" data-target="#message${message.id}" id="message-${
+  <a data-toggle="modal" data-target="#message${message.id}" data-id="${
     message.id
-  }" data-id="${
-    message.id
-  }" class="list-group-item list-group-item-action message-list-item ${
+  }" class="dynamic-content list-group-item list-group-item-action message-list-item ${
     message.read ? "" : "list-group-item-primary"
   }"> From <strong><img class="rounded-circle" style="width: 30px; height: 30px; margin: 5px"
   src="${
@@ -200,8 +199,13 @@ const createHtmlMessagePage = (message) => {
 export function fetchMessagesPage(pageNumber) {
   // messages page
 
-  const heading = `<div class="container-fluid">
-<h1 id="messagesHeading" class="h1 text-gray-800 my-5">Messages</h1></div>`;
+  const heading = `<div class="dynamic-content container-fluid">
+<h1 id="messagesHeading" class="h1 text-gray-800 my-5">Messages
+<div class="text-right">
+<div id="newMessageButton" class="btn btn-primary">New Message</div>
+</div></h1>
+</div>
+`;
 
   // render heading and containers
   jsContent.innerHTML =
@@ -229,9 +233,27 @@ export function fetchMessagesPage(pageNumber) {
       setTimeout(() => {
         activatePaginationLinks();
         activateMessagesClickEvent();
+        activateReplyButtons();
       }, 1500)
     )
     .catch((err) => console.log(err));
+
+  const newMessageButton = document.getElementById("newMessageButton");
+  newMessageButton.addEventListener("click", showPage("messagePage"));
+}
+
+function activateReplyButtons() {
+  const replyButtons = document.getElementsByClassName("replyMessageButton");
+
+  [...replyButtons].forEach((button) =>
+    button.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      const modal = document.getElementById(`message${id}`);
+      const reset = modal.innerHTML;
+
+      modal.innerHTML = "<textarea></textarea>";
+    })
+  );
 }
 
 function activateMessagesClickEvent() {
@@ -239,7 +261,6 @@ function activateMessagesClickEvent() {
   // for each message, update read to true
   [...messages].forEach((message) =>
     message.addEventListener("click", (e) => {
-      console.log(e.target.classList);
       const id = e.target.dataset.id;
       const baseUrl = window.location.origin;
       const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
@@ -259,8 +280,9 @@ function activateMessagesClickEvent() {
           // mark read as true
           body: JSON.stringify({ read: true }),
         })
+          // remove unread styles
           .then(e.target.classList.remove("list-group-item-primary"))
-          .then(e.target.classList.remove("font-weight-bold"))
+          // adjust unread counter in nav
           .then(() => [
             unread.innerHTML--,
             unread.innerHTML < 1 ? (unread.style.display = "none") : "",

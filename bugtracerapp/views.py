@@ -28,6 +28,7 @@ import json
 def index(request):
     bug_form = BugForm
     project_form = ProjectForm
+    message_form = MessageForm
 
     if request.method == "POST":
         data = request.POST
@@ -84,7 +85,11 @@ def index(request):
                 JsonResponse(
                     {"error": "Something else went wrong"}, status=404)
 
-    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form})
+        # if receiver in data, it is message form
+        elif "receiver" in data:
+            print(data['content'])
+
+    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, "message_form": message_form})
 
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):

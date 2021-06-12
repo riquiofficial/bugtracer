@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import User, Bug, Project
+from .models import User, Bug, Project, Message
 
 
 class BugForm(forms.ModelForm):
@@ -68,4 +68,15 @@ class EditProfileForm(forms.ModelForm):
         widgets = {
             'profile_picture': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'}),
             'bio': forms.Textarea(attrs={'class': 'form-control mb-2'})
+        }
+
+
+class MessageForm(forms.ModelForm):
+
+    class Meta:
+        model = Message
+        fields = ['content', 'receiver']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+            'receiver': forms.SelectMultiple(attrs={'class': 'form-control'})
         }

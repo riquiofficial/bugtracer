@@ -21,6 +21,7 @@ urlpatterns = [
     path('registerProject', views.index, name="register_project"),
     path('search', views.index, name="search"),
     path('messages', views.index, name="messages"),
+    path('alerts', views.index, name='alerts'),
 
     # django rest framework
     path('api/', include(router.urls)),

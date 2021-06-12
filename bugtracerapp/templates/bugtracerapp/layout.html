@@ -345,11 +345,29 @@
       </div>
     </div>
 
+    <!-- alert modals -->
+
+    <div id="alertModals"></div>
+
     <!-- message modals -->
     <div id="messageModals"></div>
 
     <!-- Dynamic Fetched Data -->
     <div class="dynamic-content" id="jsContent">{% block body %} {% endblock %}</div>
+
+    <!-- message form -->
+    <div class="dynamic-content" id="messageForm" style="display: none">
+        <div class="container-fluid" >
+            <h1 class="h3 text-gray-800 my-5">Send a Message</h1>
+            <p class="">Please enter your message and select which user(s) to send it to.</p>
+          </div>
+          <div class="container-fluid">
+            <form action="" method="POST" enctype="multipart/form-data">
+              {%csrf_token%} {{message_form}}
+              <input id="submitMessageForm" class="btn btn-primary mt-4" value="Submit" />
+            </form>
+          </div>
+        </div>
 
      <!-- Footer -->
      <footer class="sticky-footer bg-white">

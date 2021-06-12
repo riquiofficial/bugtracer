@@ -17,7 +17,7 @@ const solved = document.getElementById("solved");
 // generate heading for active bug or solved bug page
 const heading = (solvedBugsPage = false) => {
   return `<div class="container-fluid">
-      <h1 id="bugHeading" class="h1 text-gray-800 my-5">${
+      <h1 id="bugHeading" class="dynamic-content h1 text-gray-800 my-5">${
         solvedBugsPage ? "Solved" : "Active"
       } Bugs</h1>
     </div>`;
@@ -139,7 +139,7 @@ export function createBugHtmlElement(bug) {
 
   //create element with data from api
   return `
-  <div class="card shadow" id="div${id}">
+  <div class="card shadow dynamic-content" id="div${id}">
     <a href="#a${id}" class="d-block card-header py-3 collapsed" data-toggle="collapse" 
       role="button" aria-expanded="false" aria-controls="a${id}">
       <h6 class="m-0 font-weight-bold text-${className}">${bug.title}
