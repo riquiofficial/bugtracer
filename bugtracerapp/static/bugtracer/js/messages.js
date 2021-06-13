@@ -61,7 +61,7 @@ function createHtmlMessage(message) {
       />`
           : ""
       }
-          <h5 class="modal-title">
+          <h5 class="modal-title" id="senderUsername${message.id}">
           ${message.sender.username}</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
@@ -164,8 +164,9 @@ const createHtmlMessagePage = (message) => {
       />`
           : ""
       }
-          <h5 class="modal-title">
-          ${message.sender.username}</h5>
+          <h5 class="modal-title" id="senderUsername${message.id}">${
+           message.sender.username
+         }</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
           </button>
@@ -298,14 +299,30 @@ function replyButtonEvent(e) {
   const id = e.target.dataset.id;
   const content = document.getElementById(`message-content-${id}`);
   const reset = String(content.innerHTML);
-  content.innerHTML = `<div><textarea id="new-content"></textarea><br />
+
+  content.innerHTML = `<div><p>Reply to sender</p><textarea id="new-message-content-${id}"></textarea><br />
     <button class="btn btn-secondary" id="cancel-reply-button-${id}">Cancel</button>
     <button class="btn btn-primary" id="reply-button-${id}">Reply</button></div>`;
 
   const sendReplyButton = document.getElementById(`reply-button-${id}`);
   const cancelButton = document.getElementById(`cancel-reply-button-${id}`);
 
-  sendReplyButton.addEventListener("click", send a message!);
+  sendReplyButton.addEventListener("click", () => {
+    const content = document.getElementById(`new-message-content-${id}`);
+    let receiver = Array(
+      document.getElementById(`senderUsername${id}`).innerText
+    );
+
+    let formData = new FormData();
+    formData.append("content", content.value);
+    formData.append("receiver", receiver);
+
+    const csrf = document.getElementsByName("csrfmiddlewaretoken")[2];
+
+    submitForm(csrf, formData);
+
+    content.innerHTML = reset;
+  });
   cancelButton.addEventListener("click", () => (content.innerHTML = reset));
 }
 

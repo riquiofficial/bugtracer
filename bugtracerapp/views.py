@@ -94,7 +94,13 @@ def index(request):
             # multiple receivers
             all_receivers = list(data['receiver'].split(','))
             for receiver in all_receivers:
-                new_message.receiver.add(receiver)
+                # new message form submits user pks
+                if receiver is int:
+                    new_message.receiver.add(receiver)
+                # reply messages submit usernames
+                else:
+                    recipient = User.objects.get(username=receiver)
+                    new_message.receiver.add(recipient)
 
             return JsonResponse({'message': 'successfully sent'})
 
