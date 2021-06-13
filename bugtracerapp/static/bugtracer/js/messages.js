@@ -289,19 +289,24 @@ function activateReplyButtons() {
   const replyButtons = document.getElementsByClassName("replyMessageButton");
 
   [...replyButtons].forEach((button) => {
-    button.removeEventListener("click", (e) => replyButtonEvent(e));
-    button.addEventListener("click", (e) => replyButtonEvent(e));
+    button.removeEventListener("click", replyButtonEvent);
+    button.addEventListener("click", replyButtonEvent);
   });
 }
 
 function replyButtonEvent(e) {
   const id = e.target.dataset.id;
-  console.log("click");
   const content = document.getElementById(`message-content-${id}`);
-  const reset = content.innerHTML;
+  const reset = String(content.innerHTML);
+  content.innerHTML = `<div><textarea id="new-content"></textarea><br />
+    <button class="btn btn-secondary" id="cancel-reply-button-${id}">Cancel</button>
+    <button class="btn btn-primary" id="reply-button-${id}">Reply</button></div>`;
 
-  content.innerHTML =
-    '<textarea id="new-content"></textarea><button class="btn btn-secondary" id="cancel-button">Cancel</button><button class="btn btn-primary" id="reply-button">Reply</button>';
+  const sendReplyButton = document.getElementById(`reply-button-${id}`);
+  const cancelButton = document.getElementById(`cancel-reply-button-${id}`);
+
+  sendReplyButton.addEventListener("click", send a message!);
+  cancelButton.addEventListener("click", () => (content.innerHTML = reset));
 }
 
 function activateMessagesClickEvent() {
