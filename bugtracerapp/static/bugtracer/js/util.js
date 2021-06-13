@@ -8,12 +8,12 @@ export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
   const projectForm = document.getElementById("registerProjectForm");
   const jsContent = document.getElementById("jsContent");
-  const messagePage = document.getElementById("messageForm");
+  const messageForm = document.getElementById("messageForm");
 
   jsContent.style.display = "none";
   bugForm.style.display = "none";
   projectForm.style.display = "none";
-  messagePage.style.display = "none";
+  messageForm.style.display = "none";
 
   if (page === "registerBug") {
     bugForm.style.display = "block";
@@ -22,7 +22,7 @@ export function showPage(page) {
   } else if (page == "jsContent") {
     jsContent.style.display = "block";
   } else if (page == "messagePage") {
-    messagePage.style.display = "block";
+    messageForm.style.display = "block";
   }
 }
 
@@ -49,6 +49,10 @@ export function submitForm(csrf, formData) {
   const contributors = document.getElementById("id_contributors");
   const logo = document.getElementById("id_logo");
 
+  // message form
+  const messageContent = document.getElementById("messageContent");
+  const receiver = document.getElementById("id_receiver");
+
   fetch(window.location.origin, {
     method: "POST",
     mode: "same-origin",
@@ -63,21 +67,27 @@ export function submitForm(csrf, formData) {
     .then((result) => alert(result.message ? result.message : result.error))
     .then(() => clearBugForm())
     .then(() => clearProjectForm())
+    .then(() => clearMessageForm())
     .catch((err) => console.log(err));
 
-  const clearBugForm = () => {
+  function clearBugForm() {
     title.value = "";
     content.value = "";
     priority.value = "";
     project.value = "";
-  };
+  }
 
-  const clearProjectForm = () => {
+  function clearProjectForm() {
     projectName.value = "";
     contributors.value = "";
     description.value = "";
     logo.value = "";
-  };
+  }
+
+  function clearMessageForm() {
+    messageContent.value = "";
+    receiver.value = "";
+  }
 }
 
 export function createPagination(count) {

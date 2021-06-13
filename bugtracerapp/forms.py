@@ -77,6 +77,6 @@ class MessageForm(forms.ModelForm):
         model = Message
         fields = ['content', 'receiver']
         widgets = {
-            'content': forms.Textarea(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'id': 'messageContent'}),
             'receiver': forms.SelectMultiple(attrs={'class': 'form-control'})
         }

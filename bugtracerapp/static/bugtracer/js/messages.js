@@ -1,8 +1,14 @@
-import { showPage, createPagination, activatePaginationLinks } from "./util.js";
+import {
+  showPage,
+  createPagination,
+  activatePaginationLinks,
+  submitForm,
+} from "./util.js";
 
 const messages = document.getElementById("messages");
 const unread = document.getElementById("message-counter");
 const jsContent = document.getElementById("jsContent");
+const baseUrl = window.location.origin;
 
 // nav bar messages
 export function fetchMessages() {
@@ -38,7 +44,7 @@ function createHtmlMessage(message) {
   }
 
   const container = document.getElementById("messageModals");
-  container.innerHTML += `<div id="navmessage${
+  container.innerHTML += `<div id="message${
     message.id
   }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -94,7 +100,7 @@ function createHtmlMessage(message) {
 </div>`;
 
   return `
-      <a data-id="${message.id}" data-toggle="modal" data-target="#navmessage${
+      <a data-id="${message.id}" data-toggle="modal" data-target="#message${
     message.id
   }" class="${
     message.read ? "" : "font-weight-bold"
@@ -139,9 +145,11 @@ const createHtmlMessagePage = (message) => {
   )}...<br>
    <small><i>${time}</i></small>
    </a>
-  <div id="message${
-    message.id
-  }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   ${
+     !document.getElementById(`message${message.id}`)
+       ? `<div id="message${
+           message.id
+         }" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content" >
       <div class="modal-header">
@@ -192,7 +200,10 @@ const createHtmlMessagePage = (message) => {
       </div>
     </div>
   </div>
-</div>
+</div>`
+       : ""
+   }
+  
 `;
 };
 
@@ -212,6 +223,41 @@ export function fetchMessagesPage(pageNumber) {
     heading +
     `<ul id="message-list" class="list-group">
 </ul>`;
+
+  // new message page
+  const newMessageButton = document.getElementById("newMessageButton");
+  newMessageButton.addEventListener("click", () => {
+    showPage("messagePage");
+
+    history.pushState(
+      { section: baseUrl + "/newMessage" },
+      null,
+      baseUrl + "/newMessage"
+    );
+
+    const sendButton = document.getElementById("submitMessageForm");
+    sendButton.addEventListener("click", () => {
+      sendMessage();
+    });
+  });
+
+  function sendMessage() {
+    const messageCsrf = document.getElementsByName("csrfmiddlewaretoken")[2];
+    const content = document.getElementById("messageContent");
+
+    // create array of each checked value of receiver input
+    const receiverSelected = document.querySelectorAll(
+      "#id_receiver option:checked"
+    );
+
+    const receiverValues = Array.from(receiverSelected).map((el) => el.value);
+
+    let messageFormFields = new FormData();
+    messageFormFields.append("content", content.value);
+    messageFormFields.append("receiver", receiverValues);
+
+    submitForm(messageCsrf, messageFormFields);
+  }
 
   const messageList = document.getElementById("message-list");
   fetch(`/api/messages/?format=json${pageNumber ? "&page=" + pageNumber : ""}`)
@@ -237,23 +283,25 @@ export function fetchMessagesPage(pageNumber) {
       }, 1500)
     )
     .catch((err) => console.log(err));
-
-  const newMessageButton = document.getElementById("newMessageButton");
-  newMessageButton.addEventListener("click", showPage("messagePage"));
 }
 
 function activateReplyButtons() {
   const replyButtons = document.getElementsByClassName("replyMessageButton");
 
-  [...replyButtons].forEach((button) =>
-    button.addEventListener("click", (e) => {
-      const id = e.target.dataset.id;
-      const modal = document.getElementById(`message${id}`);
-      const reset = modal.innerHTML;
+  [...replyButtons].forEach((button) => {
+    button.removeEventListener("click", (e) => replyButtonEvent(e));
+    button.addEventListener("click", (e) => replyButtonEvent(e));
+  });
+}
 
-      modal.innerHTML = "<textarea></textarea>";
-    })
-  );
+function replyButtonEvent(e) {
+  const id = e.target.dataset.id;
+  console.log("click");
+  const content = document.getElementById(`message-content-${id}`);
+  const reset = content.innerHTML;
+
+  content.innerHTML =
+    '<textarea id="new-content"></textarea><button class="btn btn-secondary" id="cancel-button">Cancel</button><button class="btn btn-primary" id="reply-button">Reply</button>';
 }
 
 function activateMessagesClickEvent() {
@@ -262,7 +310,6 @@ function activateMessagesClickEvent() {
   [...messages].forEach((message) =>
     message.addEventListener("click", (e) => {
       const id = e.target.dataset.id;
-      const baseUrl = window.location.origin;
       const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
       // if unread message, send request to make read and remove unread styles
@@ -295,7 +342,6 @@ function activateMessagesClickEvent() {
 
 // more messages page
 document.getElementById("messagePage").addEventListener("click", () => {
-  const baseUrl = window.location.origin;
   fetchMessagesPage();
   showPage("jsContent");
 

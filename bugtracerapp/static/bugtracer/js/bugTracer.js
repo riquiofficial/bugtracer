@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path === "/activeBugs") {
     fetchBugs();
     showPage("jsContent");
-  } else if (path === "/solved") {
+  } else if (path === "/resolvedBugs") {
     fetchBugs(1, true);
     showPage("jsContent");
   } else if (path === "/registerBug" || path === "/registerProject") {
@@ -31,33 +31,38 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path == "/alerts") {
     fetchAlertsPage();
     showPage("jsContent");
+  } else if (path == "/newMessage") {
+    showPage("messagePage");
   }
 
   // browser history back/forward
   window.onpopstate = function (e) {
+    const baseUrl = window.location.origin;
     const prevPage = e.state;
+
     if (prevPage == null) {
       showPage();
-    } else if (prevPage.section == "activeBugs") {
+    } else if (prevPage.section == baseUrl + "/activeBugs") {
       fetchBugs();
       showPage("jsContent");
-    } else if (prevPage.section == "solved") {
+    } else if (prevPage.section == baseUrl + "/resolvedBugs") {
       fetchBugs(1, true);
       showPage("jsContent");
-    } else if (
-      prevPage.section == "registerBug" ||
-      prevPage.section == "registerProject"
-    ) {
-      showPage(prevPage.section);
-    } else if (prevPage.section == "allProjects") {
+    } else if (prevPage.section == baseUrl + "/registerBug") {
+      showPage("registerBug");
+    } else if (prevPage.section == baseUrl + "/registerProject") {
+      showPage("registerProject");
+    } else if (prevPage.section == baseUrl + "/allProjects") {
       fetchProjects();
       showPage("jsContent");
-    } else if (prevPage.section == "messages") {
+    } else if (prevPage.section == baseUrl + "/messages") {
       fetchMessagesPage();
       showPage("jsContent");
-    } else if (prevPage.section == "alerts") {
+    } else if (prevPage.section == baseUrl + "/alerts") {
       fetchAlertsPage();
       showPage("jsContent");
+    } else if (prevPage.section == baseUrl + "/newMessage") {
+      showPage("messagePage");
     }
   };
 });

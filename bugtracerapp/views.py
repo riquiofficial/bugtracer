@@ -72,6 +72,7 @@ def index(request):
 
                 # add multiple contributors
                 all_contributors = [data['contributors'].split(',')]
+                print(all_contributors)
                 for num in all_contributors[0]:
                     new_project.contributors.add(num)
 
@@ -87,7 +88,18 @@ def index(request):
 
         # if receiver in data, it is message form
         elif "receiver" in data:
-            print(data['content'])
+            new_message = Message.objects.create(
+                sender=request.user, content=data['content'])
+
+            # multiple receivers
+            all_receivers = list(data['receiver'].split(','))
+            for receiver in all_receivers:
+                new_message.receiver.add(receiver)
+
+            return JsonResponse({'message': 'successfully sent'})
+
+        else:
+            return JsonResponse({'error': 'not a valid form'})
 
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, "message_form": message_form})
 

@@ -264,7 +264,7 @@
                                   Message Center
                               </h6>
                               <div id="messages">
-                            </div>
+                                </div>
                               <a class="dropdown-item text-center small text-gray-500" id="messagePage">Read More Messages</a>
                           </div>
                       </li>
@@ -362,9 +362,9 @@
             <p class="">Please enter your message and select which user(s) to send it to.</p>
           </div>
           <div class="container-fluid">
-            <form action="" method="POST" enctype="multipart/form-data">
+            <form>
               {%csrf_token%} {{message_form}}
-              <input id="submitMessageForm" class="btn btn-primary mt-4" value="Submit" />
+              <input id="submitMessageForm" class="btn btn-primary mt-4" value="Send" />
             </form>
           </div>
         </div>
@@ -409,6 +409,7 @@ aria-hidden="true">
   </div>
 </div>
 </div>
+
  <!-- Bootstrap core JavaScript-->
  <script src="{% static 'bugtracer/vendor/jquery/jquery.min.js' %}"></script>
  <script src="{% static 'bugtracer/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
