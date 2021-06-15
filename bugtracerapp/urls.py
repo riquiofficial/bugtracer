@@ -9,6 +9,7 @@ router.register(r'alerts', views.Alerts, 'Alert'),
 router.register(r'solved', views.Solved, 'Solved'),
 router.register(r"active", views.ActiveBugs, 'Bugs'),
 router.register(r'projects', views.Projects, 'Projects')
+router.register(r'profile', views.Profile, 'Profile')
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -23,14 +24,15 @@ urlpatterns = [
     path('messages', views.index, name="messages"),
     path('alerts', views.index, name='alerts'),
     path('newMessage', views.index, name='new_message'),
+    path("profile/<str:slug>", views.index, name="profile"),
 
     # django rest framework
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("editproject/<int:pk>", views.UpdateProject.as_view(), name="edit_project"),
 
     # generic django views
-    path("profile/<str:slug>", views.Profile.as_view(), name="profile"),
+    path("editproject/<int:pk>", views.UpdateProject.as_view(), name="edit_project"),
+    # path("profile/<str:slug>", views.Profile.as_view(), name="profile"),
     path('profile/edit/<str:slug>',
          views.EditProfile.as_view(), name='edit_profile'),
     path("login", views.login_view, name="login"),

@@ -277,7 +277,7 @@
                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span class="mr-2 d-lg-inline text-gray-600 small">
                                   {% if request.user.is_authenticated %}
-                                  {{request.user.username}}
+                                  <span id="activeUsername">{{request.user.username}}</span>
                                     <img class="img-profile rounded-circle"
                                     src="{% if request.user.profile_picture %}
                                     {{request.user.profile_picture.url}}
@@ -290,7 +290,7 @@
                           <!-- Dropdown - User Information -->
                           <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                               aria-labelledby="userDropdown">
-                              <a class="dropdown-item" href="{% url 'profile' request.user.username %}">
+                              <a class="dropdown-item" id="userProfileButton">
                                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                   Profile
                               </a>

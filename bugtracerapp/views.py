@@ -25,7 +25,7 @@ import json
 
 
 @login_required(login_url='login')
-def index(request):
+def index(request, slug=""):
     bug_form = BugForm
     project_form = ProjectForm
     message_form = MessageForm
@@ -109,6 +109,24 @@ def index(request):
 
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, "message_form": message_form})
 
+# rest framework classes
+
+
+class Alerts(viewsets.ModelViewSet):
+    serializer_class = AlertSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Alert.objects.filter(user=self.request.user).order_by('-timestamp')
+
+
+class Messages(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Message.objects.filter(receiver=self.request.user).order_by('-timestamp')
+
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
@@ -142,16 +160,14 @@ class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'contributors__username']
 
 
-class ProjectDetail(LoginRequiredMixin, DetailView):
+class Profile(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
-    model = Project
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'username'
 
-    # get and show bugs for this project
-    def get_context_data(self, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(**kwargs)
-        context['bug_list'] = Bug.objects.filter(
-            project=context['object'], solved=False).order_by('priority')
-        return context
+# edit views
 
 
 class UpdateProject(LoginRequiredMixin, UpdateView):
@@ -163,13 +179,6 @@ class UpdateProject(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-
-
-class Profile(LoginRequiredMixin, DetailView):
-    login_url = 'login'
-    model = User
-    slug_field = 'username'
-    template_name = 'bugtracerapp/profile.html'
 
 
 class EditProfile(LoginRequiredMixin, UpdateView):
@@ -212,19 +221,3 @@ class Register(CreateView):
     template_name = 'bugtracerapp/register.html'
     success_url = reverse_lazy('login')
     form_class = CreateUserForm
-
-
-class Alerts(viewsets.ModelViewSet):
-    serializer_class = AlertSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Alert.objects.filter(user=self.request.user).order_by('-timestamp')
-
-
-class Messages(viewsets.ModelViewSet):
-    serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Message.objects.filter(receiver=self.request.user).order_by('-timestamp')

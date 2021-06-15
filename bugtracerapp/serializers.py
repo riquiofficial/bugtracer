@@ -23,6 +23,14 @@ class ProjectDetailSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'title', 'logo', 'contributors', 'description', 'date']
 
 
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'profile_picture',
+                  'bio', 'date_joined']
+
+
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = UserSerializer()
     receiver = UserSerializer(

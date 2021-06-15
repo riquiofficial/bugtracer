@@ -1,16 +1,28 @@
 <!---->
-{%block body %} {%if user.id == request.user.id %}
-<div class="container-fluid">
-  <h1 class="h3 text-gray-800 my-5">Update Profile</h1>
-  <h4 class="mb-4">
-    {{user.username}}, please tell us a little bit about yourself:
-  </h4>
-</div>
-<div class="container-fluid">
-  <form action="" method="POST" enctype="multipart/form-data">
-    {%csrf_token%} {{form}}
-    <input type="submit" class="btn btn-primary" />
-  </form>
+{%extends 'bugtracerapp/form_layout.html'%} {%block title%} | Update
+Profile{%endblock%} {%block body%} {%if user.id == request.user.id %}
+<div class="form m-5 dynamic-content">
+  <div class="container-fluid dynamic-content">
+    <h1 class="h3 text-gray-800 my-5">Update Profile</h1>
+
+    <h4 class="mb-4">
+      {{user.username}}, please tell us a little bit about yourself:
+    </h4>
+    {%if user.profile_picture%}
+    <img
+      width="300px"
+      class="mb-4"
+      src="{{user.profile_picture.url}}"
+      alt="{{user.username}}'s profile picture"
+    />
+    {%endif%}
+  </div>
+  <div class="container-fluid">
+    <form action="" method="POST" enctype="multipart/form-data">
+      {%csrf_token%} {{form}}
+      <input type="submit" class="btn btn-primary" />
+    </form>
+  </div>
 </div>
 {%else%}
 <div class="container-fluid">
