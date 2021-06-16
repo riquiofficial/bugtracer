@@ -146,7 +146,7 @@ export function createProjectHtmlElement(project) {
         .map(
           (
             contributor
-          ) => `<a><li class="contributor" style="padding: 3px"><img src="${contributor.profile_picture}" 
+          ) => `<a><li class="contributor" data-id="${project.id}" data-username="${contributor.username}" style="padding: 3px"><img src="${contributor.profile_picture}" 
       width="40px" height="40px" data-id="${project.id}" data-username="${contributor.username}" class="rounded-circle" alt="${contributor.username}'s profile picture">
       ${contributor.username}</li></a>`
         )

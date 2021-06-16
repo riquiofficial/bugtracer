@@ -21,7 +21,7 @@ from .forms import *
 # REST framework
 from .serializers import *
 from rest_framework import viewsets, permissions, filters
-import json
+import datetime
 
 
 @login_required(login_url='login')
@@ -107,7 +107,30 @@ def index(request, slug=""):
         else:
             return JsonResponse({'error': 'not a valid form'})
 
-    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form, "project_form": project_form, "message_form": message_form})
+    # dashboard data
+    total_bugs = Bug.objects.all().count()
+    solved_bugs = Bug.objects.filter(solved=True).count()
+    solved_bugs_percentage = int(round(solved_bugs / total_bugs * 100))
+
+    unread_messages = Message.objects.filter(
+        receiver=request.user).exclude(read=request.user).count()
+
+    total_projects = Project.objects.filter(contributors=request.user).count()
+
+    this_months_bugs = Bug.objects.filter(
+        date__month=datetime.datetime.now().month).count()
+
+    projects = Project.objects.all()
+    bugs_per_project = {}
+    for project in projects:
+        bugs_per_project[project.title] = Bug.objects.filter(
+            project=project).count()
+
+    return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form,
+                                                        "project_form": project_form, "message_form": message_form,
+                                                        "total_active_bugs": total_bugs, "solved_bugs": solved_bugs_percentage,
+                                                        "unread_messages": unread_messages, "total_projects": total_projects,
+                                                        'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project})
 
 # rest framework classes
 

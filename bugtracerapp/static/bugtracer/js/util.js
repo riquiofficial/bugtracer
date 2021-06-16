@@ -10,11 +10,13 @@ export function showPage(page) {
   const projectForm = document.getElementById("registerProjectForm");
   const jsContent = document.getElementById("jsContent");
   const messageForm = document.getElementById("messageForm");
+  const dashboard = document.getElementById("dashboard");
 
   jsContent.style.display = "none";
   bugForm.style.display = "none";
   projectForm.style.display = "none";
   messageForm.style.display = "none";
+  dashboard.style.display = "none";
 
   if (page === "registerBug") {
     bugForm.style.display = "block";
@@ -24,6 +26,8 @@ export function showPage(page) {
     jsContent.style.display = "block";
   } else if (page == "messagePage") {
     messageForm.style.display = "block";
+  } else if (page == null) {
+    dashboard.style.display = "block";
   }
 }
 
@@ -180,8 +184,10 @@ export function activateContributorProfiles() {
         ? cancelButton
         : (cancelButton = document.getElementById(`message-cancel-${id}`));
       // if id present, close modal with corresponding id
-      id ? cancelButton.click() : "";
-      fetchProfile(user);
+      if (user !== undefined) {
+        id ? cancelButton.click() : "";
+        fetchProfile(user);
+      }
     })
   );
 }
