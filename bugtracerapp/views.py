@@ -109,8 +109,8 @@ def index(request, slug=""):
 
     # dashboard data
     total_bugs = Bug.objects.all().count()
-    solved_bugs = Bug.objects.filter(solved=True).count()
-    solved_bugs_percentage = int(round(solved_bugs / total_bugs * 100))
+    solved_bugs = Bug.objects.filter(solved=True)
+    solved_bugs_percentage = int(round(solved_bugs.count() / total_bugs * 100))
 
     unread_messages = Message.objects.filter(
         receiver=request.user).exclude(read=request.user).count()
