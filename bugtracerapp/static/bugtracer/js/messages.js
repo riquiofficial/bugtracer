@@ -3,6 +3,7 @@ import {
   createPagination,
   activatePaginationLinks,
   submitForm,
+  activateContributorProfiles,
 } from "./util.js";
 
 const messages = document.getElementById("messages");
@@ -28,6 +29,7 @@ export function fetchMessages() {
       setTimeout(() => {
         activateMessagesClickEvent();
         activateReplyButtons();
+        activateContributorProfiles();
       }, 1500)
     )
     .catch((err) => console.log(err));
@@ -61,9 +63,11 @@ function createHtmlMessage(message) {
       />`
           : ""
       }
-          <h5 class="modal-title" id="senderUsername${message.id}">
+          <h5 class="modal-title contributor" id="senderUsername${
+            message.id
+          }" data-id="${message.id}" data-username="${message.sender.username}">
           ${message.sender.username}</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <button class="close" type="button" data-data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
           </button>
       </div>
@@ -73,7 +77,13 @@ function createHtmlMessage(message) {
       <ul style="list-style: none">
       ${message.receiver
         .map(
-          (receiver) => `<li style="padding: 3px"><img src="${
+          (receiver) => `<a><li class="contributor" data-id="${
+            message.id
+          }" data-username="${
+            receiver.username
+          }" style="padding: 3px"><img data-id="${message.id}" data-username="${
+            receiver.username
+          }" src="${
             receiver.profile_picture
               ? receiver.profile_picture
               : "/media/profile-pics/undraw_profile.svg"
@@ -81,7 +91,7 @@ function createHtmlMessage(message) {
       width="40px" height="40px" class="rounded-circle" alt="${
         receiver.username
       }'s profile picture">
-      ${receiver.username}</li>`
+      ${receiver.username}</li></a>`
         )
         .join("")} 
         </ul></small>

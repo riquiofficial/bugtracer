@@ -2,6 +2,7 @@ import { fetchBugs } from "./bugs.js";
 import { fetchMessagesPage } from "./messages.js";
 import { fetchProjects } from "./projects.js";
 import { fetchAlertsPage } from "./alerts.js";
+import { fetchProfile } from "./profile.js";
 
 // dynamically show which div to display
 export function showPage(page) {
@@ -165,5 +166,22 @@ export function formatDate(date) {
     date.getFullYear() +
     " " +
     strTime
+  );
+}
+
+export function activateContributorProfiles() {
+  const userList = document.querySelectorAll(".contributor");
+  userList.forEach((button) =>
+    button.addEventListener("click", (e) => {
+      const user = e.target.dataset.username;
+      const id = e.target.dataset.id;
+      let cancelButton = document.getElementById(`project-cancel-${id}`);
+      cancelButton
+        ? cancelButton
+        : (cancelButton = document.getElementById(`message-cancel-${id}`));
+      // if id present, close modal with corresponding id
+      id ? cancelButton.click() : "";
+      fetchProfile(user);
+    })
   );
 }

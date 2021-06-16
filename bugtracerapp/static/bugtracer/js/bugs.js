@@ -5,6 +5,7 @@ import {
   createPagination,
   activatePaginationLinks,
   formatDate,
+  activateContributorProfiles,
 } from "./util.js";
 
 const baseUrl = window.location.origin;
@@ -104,6 +105,7 @@ export function fetchBugs(page = null, solvedBugsPage = false) {
     )
     .then(() => activatePaginationLinks())
     .then(() => activateResolveButtons())
+    .then(() => activateContributorProfiles())
     .catch((err) => console.log(err));
 }
 
@@ -170,13 +172,13 @@ export function createBugHtmlElement(bug) {
           <p class="ml-4">${bug.content}</p>
           ${
             bug.solved
-              ? `<hr /><p>Resolved by ${
-                  bug.closed_by.profile_picture
-                    ? `<img width="30px" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.closed_by.profile_picture}" alt="${bug.closed_by.username}'s profile picture">`
-                    : ""
-                }<a href="/profile/${bug.closed_by.username}">${
+              ? `<hr /><p>Resolved by <a class="contributor" data-username="${
                   bug.closed_by.username
-                }</a> who wrote:</p>
+                }">${
+                  bug.closed_by.profile_picture
+                    ? `<img width="30px" data-username="${bug.closed_by.username}" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.closed_by.profile_picture}" alt="${bug.closed_by.username}'s profile picture">`
+                    : ""
+                }${bug.closed_by.username}</a> who wrote:</p>
                 ${
                   bug.solved_text
                     ? `<p class="ml-4 mb-5 mr-4"><small>"${bug.solved_text}"</small></p>`
@@ -192,11 +194,13 @@ export function createBugHtmlElement(bug) {
         
         <div class="text-right">
           <p class="mb-0">
-            <small>Submitted by <a href="/profile/${bug.author.username}">
+            <small>Submitted by <a class="contributor" data-username="${
+              bug.author.username
+            }">
             </small>
             ${
               bug.author.profile_picture
-                ? `<img width="30px" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.author.profile_picture}" alt="${bug.author.username}'s profile picture">`
+                ? `<img width="30px" data-username="${bug.author.username}" height="30px" style="border-radius: 50%; margin: 2px" src="${bug.author.profile_picture}" alt="${bug.author.username}'s profile picture">`
                 : ""
             }
             ${bug.author.username}

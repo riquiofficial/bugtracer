@@ -5,7 +5,10 @@ import {
   createPagination,
   activatePaginationLinks,
   formatDate,
+  activateContributorProfiles,
 } from "./util.js";
+
+import { fetchProfile } from "./profile.js";
 // project registration page
 
 const baseUrl = window.location.origin;
@@ -89,6 +92,7 @@ export function fetchProjects(pageNumber) {
     )
     .then(() => activatePaginationLinks(true))
     .then(() => activateProjectEditButtons())
+    .then(() => activateContributorProfiles())
     .catch((err) => console.log(err));
 }
 
@@ -142,12 +146,11 @@ export function createProjectHtmlElement(project) {
         .map(
           (
             contributor
-          ) => `<li style="padding: 3px"><img src="${contributor.profile_picture}" 
-      width="40px" height="40px" class="rounded-circle" alt="${contributor.username}'s profile picture">
-      ${contributor.username}</li>`
+          ) => `<a><li class="contributor" style="padding: 3px"><img src="${contributor.profile_picture}" 
+      width="40px" height="40px" data-id="${project.id}" data-username="${contributor.username}" class="rounded-circle" alt="${contributor.username}'s profile picture">
+      ${contributor.username}</li></a>`
         )
         .join("")}
-        
         </ul></small>
         <p class="mb-0 text-right"><small>Date Created: ${time}</small></p>
       </div>
