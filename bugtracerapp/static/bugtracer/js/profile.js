@@ -3,6 +3,7 @@ import { showPage } from "./util.js";
 const jsContent = document.getElementById("jsContent");
 const profileButton = document.getElementById("userProfileButton");
 const activeUsername = document.getElementById("activeUsername").innerText;
+const baseUrl = window.location.origin;
 
 const profilePage = (data) => {
   return `<div class="container-fluid dynamic-content">
@@ -16,7 +17,14 @@ const profilePage = (data) => {
       <h2 class="mb-4">Bio:</h2>
       <p>${data.bio}</p>
       <p class="">
-        <a>Edit Profile</a>
+      ${
+        activeUsername === data.username
+          ? `<a href="${
+              baseUrl + "/profile/edit/" + data.username
+            }">Edit Profile</a>`
+          : ""
+      }
+        
       </p>
     </div>`;
 };
