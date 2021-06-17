@@ -1,6 +1,5 @@
 # generic views
 from django.http.response import JsonResponse
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 
 # authentication
@@ -14,7 +13,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
 # models and forms
-from django.db.models import Q
 from .models import *
 from .forms import *
 
