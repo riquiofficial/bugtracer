@@ -1,4 +1,4 @@
 django
 django-rest-framework
-environ
+django-environ
 whitenoise

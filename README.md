@@ -9,4 +9,5 @@ Currently in development!
 Python v3.8
 Django v2.2.5
 Django Rest Framework v3.12.2
-whitenoise 5.2
+Django-environ 0.4.5
+Whitenoise 5.2
