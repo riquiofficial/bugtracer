@@ -21,15 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
     showPage();
   } else if (path === "/activeBugs") {
     fetchBugs();
-    showPage("jsContent");
+    showPage("activeBugs");
   } else if (path === "/resolvedBugs") {
     fetchBugs(1, true);
-    showPage("jsContent");
+    showPage("resolvedBugs");
   } else if (path === "/registerBug" || path === "/registerProject") {
     showPage(path.substring(1));
   } else if (path === "/allProjects") {
     fetchProjects();
-    showPage("jsContent");
+    showPage("allProjects");
   } else if (path == "/messages") {
     fetchMessagesPage();
     showPage("jsContent");
@@ -57,17 +57,17 @@ document.addEventListener("DOMContentLoaded", () => {
       showPage();
     } else if (prevPage.section == baseUrl + "/activeBugs") {
       fetchBugs();
-      showPage("jsContent");
+      showPage("activeBugs");
     } else if (prevPage.section == baseUrl + "/resolvedBugs") {
       fetchBugs(1, true);
-      showPage("jsContent");
+      showPage("resolvedBugs");
     } else if (prevPage.section == baseUrl + "/registerBug") {
       showPage("registerBug");
     } else if (prevPage.section == baseUrl + "/registerProject") {
       showPage("registerProject");
     } else if (prevPage.section == baseUrl + "/allProjects") {
       fetchProjects();
-      showPage("jsContent");
+      showPage("allProjects");
     } else if (prevPage.section == baseUrl + "/messages") {
       fetchMessagesPage();
       showPage("jsContent");

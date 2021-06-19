@@ -18,16 +18,37 @@ export function showPage(page) {
   messageForm.style.display = "none";
   dashboard.style.display = "none";
 
+  // nav styles
+  const navBugs = document.getElementById("nav-bugs").classList;
+  const navDashboard = document.getElementById("nav-dashboard").classList;
+  const navProjects = document.getElementById("nav-projects").classList;
+
+  navBugs.remove("active");
+  navDashboard.remove("active");
+  navProjects.remove("active");
+
   if (page === "registerBug") {
     bugForm.style.display = "block";
+    navBugs.add("active");
   } else if (page == "registerProject") {
     projectForm.style.display = "block";
+    navProjects.add("active");
   } else if (page == "jsContent") {
     jsContent.style.display = "block";
+  } else if (page == "activeBugs") {
+    jsContent.style.display = "block";
+    navBugs.add("active");
+  } else if (page == "resolvedBugs") {
+    jsContent.style.display = "block";
+    navBugs.add("active");
   } else if (page == "messagePage") {
     messageForm.style.display = "block";
   } else if (page == null) {
     dashboard.style.display = "block";
+    navDashboard.add("active");
+  } else if (page == "allProjects") {
+    jsContent.style.display = "block";
+    navProjects.add("active");
   }
 }
 

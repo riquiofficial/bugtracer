@@ -54,7 +54,7 @@ document.getElementById("submitProjectForm").addEventListener("click", () => {
 // project list page
 
 document.getElementById("allProjects").addEventListener("click", () => {
-  showPage("jsContent");
+  showPage("allProjects");
   fetchProjects();
   history.pushState(
     { section: baseUrl + "/allProjects" },

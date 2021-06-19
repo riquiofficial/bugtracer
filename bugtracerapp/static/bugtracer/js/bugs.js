@@ -58,7 +58,7 @@ document.getElementById("submitBugForm").addEventListener("click", () => {
 
 activeBugs.addEventListener("click", () => {
   fetchBugs();
-  showPage("jsContent");
+  showPage("activeBugs");
   closeNavBarMenu();
   history.pushState(
     { section: baseUrl + "/activeBugs" },
@@ -69,7 +69,7 @@ activeBugs.addEventListener("click", () => {
 
 solved.addEventListener("click", () => {
   fetchBugs(1, true);
-  showPage("jsContent");
+  showPage("resolvedBugs");
   closeNavBarMenu();
   history.pushState(
     { section: baseUrl + "/resolvedBugs" },
