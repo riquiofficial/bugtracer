@@ -368,7 +368,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                       Projects</div>
+                                       Projects Contributing to</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_projects}}</div>
                                 </div>
                                 <div class="col-auto">
@@ -452,7 +452,7 @@
         <div class="container-fluid">
             <form>
                 {%csrf_token%} {{bug_form}}
-                <input id="submitBugForm" class="btn btn-primary mt-4" value="Submit" />
+                <button type="button" id="submitBugForm" class="btn btn-primary mt-4" >Submit</button>
             </form>
         </div>
     </div>
@@ -466,7 +466,7 @@
       <div class="container-fluid">
         <form action="" method="POST" enctype="multipart/form-data">
           {%csrf_token%} {{project_form}}
-          <input id="submitProjectForm" class="btn btn-primary mt-4" value="Submit" />
+          <button type="button" id="submitProjectForm" class="btn btn-primary mt-4" >Submit</button>
         </form>
       </div>
     </div>
@@ -490,7 +490,7 @@
           <div class="container-fluid">
             <form>
               {%csrf_token%} {{message_form}}
-              <input id="submitMessageForm" class="btn btn-primary mt-4" value="Send" />
+              <button type="button" id="submitMessageForm" class="btn btn-primary mt-4" >Send</button>
             </form>
           </div>
         </div>

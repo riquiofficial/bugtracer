@@ -247,28 +247,10 @@ export function fetchMessagesPage(pageNumber) {
     );
 
     const sendButton = document.getElementById("submitMessageForm");
-    sendButton.addEventListener("click", () => {
-      sendMessage();
-    });
+    // ensure event does not duplicate when page re-opened
+    sendButton.removeEventListener("click", sendMessage);
+    sendButton.addEventListener("click", sendMessage);
   });
-
-  function sendMessage() {
-    const messageCsrf = document.getElementsByName("csrfmiddlewaretoken")[2];
-    const content = document.getElementById("messageContent");
-
-    // create array of each checked value of receiver input
-    const receiverSelected = document.querySelectorAll(
-      "#id_receiver option:checked"
-    );
-
-    const receiverValues = Array.from(receiverSelected).map((el) => el.value);
-
-    let messageFormFields = new FormData();
-    messageFormFields.append("content", content.value);
-    messageFormFields.append("receiver", receiverValues);
-
-    submitForm(messageCsrf, messageFormFields);
-  }
 
   const messageList = document.getElementById("message-list");
   fetch(`/api/messages/?format=json${pageNumber ? "&page=" + pageNumber : ""}`)
@@ -294,6 +276,25 @@ export function fetchMessagesPage(pageNumber) {
       }, 1500)
     )
     .catch((err) => console.log(err));
+}
+
+export function sendMessage() {
+  console.log("clicked");
+  const messageCsrf = document.getElementsByName("csrfmiddlewaretoken")[2];
+  const content = document.getElementById("messageContent");
+
+  // create array of each checked value of receiver input
+  const receiverSelected = document.querySelectorAll(
+    "#id_receiver option:checked"
+  );
+
+  const receiverValues = Array.from(receiverSelected).map((el) => el.value);
+
+  let messageFormFields = new FormData();
+  messageFormFields.append("content", content.value);
+  messageFormFields.append("receiver", receiverValues);
+
+  submitForm(messageCsrf, messageFormFields);
 }
 
 function activateReplyButtons() {

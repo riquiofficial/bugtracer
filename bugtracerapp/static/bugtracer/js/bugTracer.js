@@ -10,7 +10,7 @@ import "./profile.js";
 import { showPage } from "./util.js";
 import { fetchBugs } from "./bugs.js";
 import { fetchProjects } from "./projects.js";
-import { fetchMessagesPage } from "./messages.js";
+import { fetchMessagesPage, sendMessage } from "./messages.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
 
@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showPage("jsContent");
   } else if (path == "/newMessage") {
     showPage("messagePage");
+    const sendButton = document.getElementById("submitMessageForm");
+    // ensure event does not duplicate when page re-opened
+    sendButton.removeEventListener("click", sendMessage);
+    sendButton.addEventListener("click", sendMessage);
   } else if (path.match(/^\/profile\//)) {
     // if profile in url, try to match a profile with username at end of url
     const requestedProfile = path.split("/").pop();

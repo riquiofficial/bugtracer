@@ -93,10 +93,10 @@ def index(request, slug=""):
             all_receivers = list(data['receiver'].split(','))
             for receiver in all_receivers:
                 # new message form submits user pks
-                if receiver is int:
+                try:
                     new_message.receiver.add(receiver)
                 # reply messages submit usernames
-                else:
+                except ValueError:
                     recipient = User.objects.get(username=receiver)
                     new_message.receiver.add(recipient)
 
