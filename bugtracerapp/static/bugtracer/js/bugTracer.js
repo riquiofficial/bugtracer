@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchProfile(requestedProfile);
     showPage("jsContent");
   }
+
   // browser history back/forward
   window.onpopstate = function (e) {
     const baseUrl = window.location.origin;
