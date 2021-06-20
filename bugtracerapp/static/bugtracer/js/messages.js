@@ -141,6 +141,8 @@ const createHtmlMessagePage = (message) => {
   return `
   <a data-toggle="modal" data-target="#message${message.id}" data-id="${
     message.id
+  }" id="message-${
+    message.id
   }" class="dynamic-content list-group-item list-group-item-action message-list-item ${
     message.read ? "" : "list-group-item-primary"
   }"> From <strong><img class="rounded-circle" style="width: 30px; height: 30px; margin: 5px"
@@ -351,6 +353,9 @@ function messageClick(e) {
   const id = e.target.dataset.id;
   const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
+  const navContent = document.getElementById(`messageContent${id}`);
+  const li = document.getElementById(`message-${id}`);
+
   // if unread message, send request to make read and remove unread styles
   if (
     e.target.classList.contains("list-group-item-primary") ||
@@ -367,7 +372,8 @@ function messageClick(e) {
       body: JSON.stringify({ read: true }),
     })
       // remove unread styles
-      .then(e.target.classList.remove("list-group-item-primary"))
+      .then(li.classList.remove("list-group-item-primary"))
+      .then(navContent ? navContent.classList.remove("font-weight-bold") : "")
       // adjust unread counter in nav
       .then(() => [
         unread.innerHTML--,

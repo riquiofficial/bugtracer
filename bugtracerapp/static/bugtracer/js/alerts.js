@@ -65,8 +65,12 @@ function createHtmlAlert(obj) {
   return `
         <a data-id="${obj.id}" data-toggle="modal" data-target="#navalert${
     obj.id
-  }" class="dropdown-item d-flex align-items-center alert-item alert-list-item ">
-        <div class="mr-3">
+  }" class="dropdown-item d-flex align-items-center alert-item alert-list-item ${
+    obj.read ? "" : "font-weight-bold"
+  }">
+        <div class="mr-3 ${obj.read ? "" : "font-weight-bold"}" data-id="${
+    obj.id
+  }">
             <div data-id="${obj.id}" class="icon-circle ${
     obj.read ? "bg-info" : "bg-warning font-weight-bold"
   }">
@@ -75,7 +79,7 @@ function createHtmlAlert(obj) {
                 } text-white"></i>
             </div>
         </div>
-        <div>
+        <div data-id="${obj.id}" class="${obj.read ? "" : "font-weight-bold"}">
             <div data-id="${obj.id}" class="small text-gray-500 ${
     obj.read === false ? "font-weight-bold" : ""
   }">${time}</div>
@@ -176,7 +180,9 @@ function alertClick(e) {
   const id = e.target.dataset.id;
   const baseUrl = window.location.origin;
   const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
-  const content = document.getElementById(`alert-content-${id}`);
+
+  const navContent = document.getElementById(`alert-content-${id}`);
+  const li = document.getElementById(`alert-${id}`);
   console.log(e.target);
   // if unread alert, send request to make read and remove unread styles
   if (
@@ -194,8 +200,8 @@ function alertClick(e) {
       body: JSON.stringify({ read: true }),
     })
       // remove unread styles
-      .then(e.target.classList.remove("list-group-item-primary"))
-      .then(content ? content.classList.remove("font-weight-bold") : "")
+      .then(li.classList.remove("list-group-item-primary"))
+      .then(navContent ? navContent.classList.remove("font-weight-bold") : "")
       // adjust unread counter in nav
       .then(() => [
         unread.innerHTML--,
