@@ -340,37 +340,41 @@ function replyButtonEvent(e) {
 function activateMessagesClickEvent() {
   const messages = document.getElementsByClassName("message-list-item");
   // for each message, update read to true
-  [...messages].forEach((message) =>
-    message.addEventListener("click", (e) => {
-      const id = e.target.dataset.id;
-      const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+  [...messages].forEach((message) => [
+    message.removeEventListener("click", messageClick),
+    message.addEventListener("click", messageClick),
+  ]);
+}
 
-      // if unread message, send request to make read and remove unread styles
-      if (
-        e.target.classList.contains("list-group-item-primary") ||
-        e.target.classList.contains("font-weight-bold")
-      ) {
-        fetch(`${baseUrl}/api/messages/${id}/`, {
-          method: "PATCH",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf.value,
-          },
-          // mark read as true
-          body: JSON.stringify({ read: true }),
-        })
-          // remove unread styles
-          .then(e.target.classList.remove("list-group-item-primary"))
-          // adjust unread counter in nav
-          .then(() => [
-            unread.innerHTML--,
-            unread.innerHTML < 1 ? (unread.style.display = "none") : "",
-          ])
-          .catch((err) => console.log(err));
-      }
+function messageClick(e) {
+  console.log("clicked");
+  const id = e.target.dataset.id;
+  const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+  // if unread message, send request to make read and remove unread styles
+  if (
+    e.target.classList.contains("list-group-item-primary") ||
+    e.target.classList.contains("font-weight-bold")
+  ) {
+    fetch(`${baseUrl}/api/messages/${id}/`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf.value,
+      },
+      // mark read as true
+      body: JSON.stringify({ read: true }),
     })
-  );
+      // remove unread styles
+      .then(e.target.classList.remove("list-group-item-primary"))
+      // adjust unread counter in nav
+      .then(() => [
+        unread.innerHTML--,
+        unread.innerHTML < 1 ? (unread.style.display = "none") : "",
+      ])
+      .catch((err) => console.log(err));
+  }
 }
 
 // more messages page

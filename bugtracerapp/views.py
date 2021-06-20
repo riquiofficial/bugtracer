@@ -242,3 +242,9 @@ class Register(CreateView):
     template_name = 'bugtracerapp/register.html'
     success_url = reverse_lazy('login')
     form_class = CreateUserForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        Alert.objects.create(user=self.object,
+                             content=f"Welcome to BugTracer, {self.object.username}! Get started by editing your profile or adding some projects and bugs.")
+        return HttpResponseRedirect(self.get_success_url())

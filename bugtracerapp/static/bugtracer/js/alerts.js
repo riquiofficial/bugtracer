@@ -5,6 +5,7 @@ const unread = document.getElementById("alert-counter");
 
 fetchAlerts();
 
+// nav bar alerts
 function fetchAlerts() {
   fetch(`/api/alerts/?format=json`)
     .then((response) => response.json())
@@ -64,10 +65,10 @@ function createHtmlAlert(obj) {
   return `
         <a data-id="${obj.id}" data-toggle="modal" data-target="#navalert${
     obj.id
-  }" class="dropdown-item d-flex align-items-center alert-item">
+  }" class="dropdown-item d-flex align-items-center alert-item alert-list-item ">
         <div class="mr-3">
             <div data-id="${obj.id}" class="icon-circle ${
-    obj.read ? "bg-info" : "bg-warning"
+    obj.read ? "bg-info" : "bg-warning font-weight-bold"
   }">
                 <i class="fas ${
                   obj.read ? "fa-file-alt" : "fa-exclamation"
@@ -75,7 +76,9 @@ function createHtmlAlert(obj) {
             </div>
         </div>
         <div>
-            <div data-id="${obj.id}" class="small text-gray-500">${time}</div>
+            <div data-id="${obj.id}" class="small text-gray-500 ${
+    obj.read === false ? "font-weight-bold" : ""
+  }">${time}</div>
             <span data-id="${obj.id}" class="${
     obj.read === false ? "font-weight-bold" : ""
   }" id="alert-content-${obj.id}">${obj.content}</span>
@@ -163,38 +166,43 @@ export function fetchAlertsPage(pageNumber) {
 function activateAlertsClickEvent() {
   const alerts = document.getElementsByClassName("alert-list-item");
   // for each alert, update read to true
-  [...alerts].forEach((alert) =>
-    alert.addEventListener("click", (e) => {
-      const id = e.target.dataset.id;
-      const baseUrl = window.location.origin;
-      const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+  [...alerts].forEach((alert) => [
+    alert.removeEventListener("click", alertClick),
+    alert.addEventListener("click", alertClick),
+  ]);
+}
 
-      // if unread alert, send request to make read and remove unread styles
-      if (
-        e.target.classList.contains("list-group-item-primary") ||
-        e.target.classList.contains("font-weight-bold")
-      ) {
-        fetch(`${baseUrl}/api/alerts/${id}/`, {
-          method: "PATCH",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf.value,
-          },
-          // mark read as true
-          body: JSON.stringify({ read: true }),
-        })
-          // remove unread styles
-          .then(e.target.classList.remove("list-group-item-primary"))
-          // adjust unread counter in nav
-          .then(() => [
-            unread.innerHTML--,
-            unread.innerHTML < 1 ? (unread.style.display = "none") : "",
-          ])
-          .catch((err) => console.log(err));
-      }
+function alertClick(e) {
+  const id = e.target.dataset.id;
+  const baseUrl = window.location.origin;
+  const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+  const content = document.getElementById(`alert-content-${id}`);
+  console.log(e.target);
+  // if unread alert, send request to make read and remove unread styles
+  if (
+    e.target.classList.contains("list-group-item-primary") ||
+    e.target.classList.contains("font-weight-bold")
+  ) {
+    fetch(`${baseUrl}/api/alerts/${id}/`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf.value,
+      },
+      // mark read as true
+      body: JSON.stringify({ read: true }),
     })
-  );
+      // remove unread styles
+      .then(e.target.classList.remove("list-group-item-primary"))
+      .then(content ? content.classList.remove("font-weight-bold") : "")
+      // adjust unread counter in nav
+      .then(() => [
+        unread.innerHTML--,
+        unread.innerHTML < 1 ? (unread.style.display = "none") : "",
+      ])
+      .catch((err) => console.log(err));
+  }
 }
 
 // more messages page
