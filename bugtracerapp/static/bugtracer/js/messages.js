@@ -372,7 +372,7 @@ function messageClick(e) {
       body: JSON.stringify({ read: true }),
     })
       // remove unread styles
-      .then(li.classList.remove("list-group-item-primary"))
+      .then(li ? li.classList.remove("list-group-item-primary") : "")
       .then(navContent ? navContent.classList.remove("font-weight-bold") : "")
       // adjust unread counter in nav
       .then(() => [
