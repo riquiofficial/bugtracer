@@ -28,6 +28,7 @@ const projectName = document.getElementById("project_name");
 const description = document.getElementById("id_description");
 const logo = document.getElementById("id_logo");
 const projectCsrf = document.getElementsByName("csrfmiddlewaretoken")[1];
+const group = document.getElementById("id_group");
 
 document.getElementById("submitProjectForm").addEventListener("click", () => {
   // get all contributors
@@ -44,6 +45,7 @@ document.getElementById("submitProjectForm").addEventListener("click", () => {
   formData.append("title", projectName.value);
   formData.append("contributors", contributorValues);
   formData.append("description", description.value);
+  formData.append("group", group.value);
   console.log(contributorValues);
 
   submitForm(projectCsrf, formData);
@@ -144,10 +146,21 @@ export function createProjectHtmlElement(project) {
       <ul style="list-style: none">
       ${project.contributors
         .map(
-          (
-            contributor
-          ) => `<a><li class="contributor" data-id="${project.id}" data-username="${contributor.username}" style="padding: 3px"><img src="${contributor.profile_picture}" 
-      width="40px" height="40px" data-id="${project.id}" data-username="${contributor.username}" class="rounded-circle" alt="${contributor.username}'s profile picture">
+          (contributor) => `<a><li class="contributor" data-id="${
+            project.id
+          }" data-username="${
+            contributor.username
+          }" style="padding: 3px"><img src="${
+            contributor.profile_picture
+              ? contributor.profile_picture
+              : window.location.origin +
+                "/static/bugtracer/img/undraw_profile.svg"
+          }" 
+      width="40px" height="40px" data-id="${project.id}" data-username="${
+            contributor.username
+          }" class="rounded-circle" alt="${
+            contributor.username
+          }'s profile picture">
       ${contributor.username}</li></a>`
         )
         .join("")}

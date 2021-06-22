@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.urls import reverse
 
@@ -71,6 +71,8 @@ class Project(models.Model):
     description = models.CharField(max_length=500)
     date = models.DateTimeField(auto_now_add=True)
     logo = models.ImageField(upload_to="logos/", null=True, blank=True)
+    group = models.ForeignKey(
+        Group, blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['title']
@@ -79,7 +81,9 @@ class Project(models.Model):
         return self.title
 
     def get_user_profiles(self):
+        print("getting profiles...")
         user_list = []
         for user in self.contributors.all():
             user_list.append(user)
+        print(user_list)
         return user_list

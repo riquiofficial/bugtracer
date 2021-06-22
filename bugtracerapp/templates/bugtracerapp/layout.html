@@ -325,7 +325,7 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Resolved Bug Percentage
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Team Resolved Bug Percentage
                                     </div>
                                     <div class="row no-gutters align-items-center">
                                         <div class="col-auto">
@@ -405,7 +405,7 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Bugs Per Project</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Team's Bugs Per Project</h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body">
@@ -413,7 +413,7 @@
                                     <canvas id="myPieChart" width="512" height="253" style="display: block; width: 512px; height: 253px;" class="chartjs-render-monitor"></canvas>
                                 </div>
                                 <hr>
-                                Donut chart showing bug <code>distribution</code> for per project
+                                Donut chart showing bug <code>distribution</code> for bugs per project in your teams
                             </div>
                       
                     </div>
@@ -431,8 +431,19 @@
                             <h6 class="m-0 font-weight-bold text-primary">Welcome!</h6>
                         </div>
                         <div class="card-body">
-                            <p>Get started by creating your profile and adding some projects and bugs! Send a message to your teammates to let them know you're here and what you'll be working on.</p>
+                            <p>Get started by creating your Team (or join one), adding to your profile and adding some projects and bugs! Send a message to your teammates to let them know you're here and what you'll be working on.</p>
                             <p class="mb-0">Let's start tracking some bugs...</p>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Your Teams</h6>
+                        </div>
+                        <div class="card-body">
+                            {%for group in groups%}
+                            <p>{{group}}</p>
+                            {%endfor%}
+                            
                         </div>
                     </div>
 

@@ -23,27 +23,49 @@ class BugForm(forms.ModelForm):
 
 class ProjectForm(forms.ModelForm):
 
+    # only get users from same team/group as user for a new project
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        users_in_group = []
+        for group in self.request.user.groups.all():
+            users_in_group.append(User.objects.filter(groups=group))
+        if len(users_in_group):
+            self.fields['contributors'].queryset = users_in_group[0]
+        self.fields['group'].queryset = self.request.user.groups.all()
+
     class Meta:
         model = Project
-        fields = ['title', 'contributors', 'description', 'logo']
+        fields = ['title', 'contributors', 'description', 'logo', 'group']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'project_name'}),
             'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2'}),
             'description': forms.Textarea(attrs={'class': 'form-control mb-2'}),
-            'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'})
+            'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2'}),
+            'group': forms.Select(attrs={'class': 'form-control mb-2'})
+
         }
 
 
 class UpdateProjectForm(forms.ModelForm):
 
+    # only get users from same team/group as project
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(UpdateProjectForm, self).__init__(*args, **kwargs)
+        self.fields['contributors'].queryset = User.objects.filter(
+            groups=self.instance.group)
+        self.fields['group'].queryset = self.request.user.groups.all()
+
     class Meta:
         model = Project
-        fields = ['title', 'contributors', 'description', 'logo']
+        fields = ['title', 'contributors', 'description', 'logo', 'group']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control mb-2', 'id': 'update-project-name'}),
             'contributors': forms.SelectMultiple(attrs={'class': 'form-control mb-2', 'id': 'update-contributors'}),
             'description': forms.Textarea(attrs={'class': 'form-control mb-2', 'id': 'update-description'}),
-            'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2', 'id': 'update-logo'})
+            'logo': forms.ClearableFileInput(attrs={'class': 'custom-file mb-2', 'id': 'update-logo'}),
+            'group': forms.Select(attrs={'class': 'form-control mb-2', 'id': 'update-group'})
         }
 
 

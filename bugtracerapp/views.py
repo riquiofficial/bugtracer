@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 
 # models and forms
+from django.db.models import Q
 from .models import *
 from .forms import *
 
@@ -25,7 +26,7 @@ import datetime
 @login_required(login_url='login')
 def index(request, slug=""):
     bug_form = BugForm
-    project_form = ProjectForm
+    project_form = ProjectForm(request.POST, request=request)
     message_form = MessageForm
 
     if request.method == "POST":
@@ -70,10 +71,14 @@ def index(request, slug=""):
 
                 # add multiple contributors
                 all_contributors = [data['contributors'].split(',')]
-                print(all_contributors)
                 for num in all_contributors[0]:
                     new_project.contributors.add(num)
 
+                # check group exists. if user in group add to project
+                group = Group.objects.get(pk=data['group'])
+                if group in request.user.groups.all():
+                    print("group addition worked")
+                    new_project.group = group
                 new_project.save()
 
                 return JsonResponse({"message": "Project successfully created!"}, status=201)
@@ -106,29 +111,56 @@ def index(request, slug=""):
             return JsonResponse({'error': 'not a valid form'})
 
     # dashboard data
-    total_bugs = Bug.objects.all().count()
-    solved_bugs = Bug.objects.filter(solved=True)
-    solved_bugs_percentage = int(round(solved_bugs.count() / total_bugs * 100))
+
+    groups = request.user.groups.all()
+
+    active_bugs = []
+    solved_bugs = []
+    this_months_bugs = []
+    all_projects = []
+
+    # for each group user is in, add active bug
+    for group in groups:
+        active_bugs.append(Bug.objects.filter(
+            project__group=group).order_by('priority', '-date'))
+        solved_bugs.append(Bug.objects.filter(
+            project__group=group).order_by('priority', '-date'))
+        this_months_bugs.append(Bug.objects.filter(
+            project__group=group, date__month=datetime.datetime.now().month))
+        all_projects.append(Project.objects.filter(group=group))
+
+    total_bugs = 0
+    solved_bugs_percentage = 0
+
+    if len(active_bugs):
+        total_bugs += active_bugs[0].count()
+
+    if len(solved_bugs):
+        total_bugs += solved_bugs[0].count()
+        solved_bugs_percentage = int(
+            round(solved_bugs[0].count() / total_bugs * 100))
+
+    if len(this_months_bugs):
+        this_months_bugs = this_months_bugs[0].count()
+    else:
+        this_months_bugs = 0
 
     unread_messages = Message.objects.filter(
         receiver=request.user).exclude(read=request.user).count()
 
     total_projects = Project.objects.filter(contributors=request.user).count()
 
-    this_months_bugs = Bug.objects.filter(
-        date__month=datetime.datetime.now().month).count()
-
-    projects = Project.objects.all()
     bugs_per_project = {}
-    for project in projects:
-        bugs_per_project[project.title] = Bug.objects.filter(
-            project=project).count()
+    if len(all_projects):
+        for project in all_projects[0]:
+            bugs_per_project[project.title] = Bug.objects.filter(
+                project=project).count()
 
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form,
                                                         "project_form": project_form, "message_form": message_form,
                                                         "total_active_bugs": total_bugs, "solved_bugs": solved_bugs_percentage,
                                                         "unread_messages": unread_messages, "total_projects": total_projects,
-                                                        'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project})
+                                                        'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project, "groups": groups})
 
 # rest framework classes
 
@@ -151,12 +183,19 @@ class Messages(viewsets.ModelViewSet):
 
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
-    queryset = Bug.objects.filter(solved=False).order_by('priority', '-date')
     paginate_by = 10
     serializer_class = BugSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content', 'author__username']
+
+    def get_queryset(self):
+        groups = self.request.user.groups.all()
+        queryset = []
+        for group in groups:
+            queryset.append(Bug.objects.filter(
+                project__group=group, solved=False).order_by('priority', '-date'))
+        return queryset[0]
 
 
 class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -169,16 +208,30 @@ class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content', 'author__username']
 
+    def get_queryset(self):
+        groups = self.request.user.groups.all()
+        queryset = []
+        for group in groups:
+            queryset.append(Bug.objects.filter(
+                project__group=group, solved=True).order_by('priority', '-date'))
+        return queryset[0]
+
 
 class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
-    queryset = Project.objects.all()
     ordering = ['title']
     paginate_by = 10
     serializer_class = ProjectDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'description', 'contributors__username']
+
+    def get_queryset(self):
+        groups = self.request.user.groups.all()
+        queryset = []
+        for group in groups:
+            queryset.append(Project.objects.filter(group=group))
+        return queryset[0]
 
 
 class Profile(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -200,6 +253,11 @@ class UpdateProject(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super(UpdateProject, self).get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
 
 
 class EditProfile(LoginRequiredMixin, UpdateView):

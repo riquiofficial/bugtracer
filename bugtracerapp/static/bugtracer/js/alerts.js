@@ -201,7 +201,14 @@ function alertClick(e) {
     })
       // remove unread styles
       .then(li ? li.classList.remove("list-group-item-primary") : "")
-      .then(navContent ? navContent.classList.remove("font-weight-bold") : "")
+      .then(
+        navContent
+          ? [
+              navContent.classList.remove("font-weight-bold"),
+              navContent.classList.add("font-weight-normal"),
+            ]
+          : ""
+      )
       // adjust unread counter in nav
       .then(() => [
         unread.innerHTML--,
