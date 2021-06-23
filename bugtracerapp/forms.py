@@ -1,7 +1,16 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import User, Bug, Project, Message
+from .models import User, Bug, Project, Message, Group
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
 
 class BugForm(forms.ModelForm):
@@ -23,7 +32,7 @@ class BugForm(forms.ModelForm):
 
 class ProjectForm(forms.ModelForm):
 
-    # only get users from same team/group as user for a new project
+    # only get users from same team/group as user
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ProjectForm, self).__init__(*args, **kwargs)
@@ -94,6 +103,14 @@ class EditProfileForm(forms.ModelForm):
 
 
 class MessageForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(MessageForm, self).__init__(*args, **kwargs)
+        users_in_group = []
+        for group in self.request.user.groups.all():
+            users_in_group.append(User.objects.filter(groups=group))
+        if len(users_in_group):
+            self.fields['receiver'].queryset = users_in_group[0]
 
     class Meta:
         model = Message

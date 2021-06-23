@@ -27,7 +27,8 @@ import datetime
 def index(request, slug=""):
     bug_form = BugForm
     project_form = ProjectForm(request.POST, request=request)
-    message_form = MessageForm
+    message_form = MessageForm(request.POST, request=request)
+    group_form = GroupForm
 
     if request.method == "POST":
         data = request.POST
@@ -160,7 +161,7 @@ def index(request, slug=""):
                                                         "project_form": project_form, "message_form": message_form,
                                                         "total_active_bugs": total_bugs, "solved_bugs": solved_bugs_percentage,
                                                         "unread_messages": unread_messages, "total_projects": total_projects,
-                                                        'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project, "groups": groups})
+                                                        'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project, "groups": groups, 'group_form': group_form})
 
 # rest framework classes
 
