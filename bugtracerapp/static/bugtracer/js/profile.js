@@ -17,7 +17,9 @@ const profilePage = (data) => {
       <h4 class="mb-4">Bio:</h4>
       <p>${data.bio}</p>
       <h4>Teams</h4>
-      <ul class="mb-4">${data.groups.map((group) => `<li>${group}</li>`)}</ul>
+      <ul class="mb-4">${Object.keys(data.groups).map(
+        (group) => `<li>${group}</li>`
+      )}</ul>
       <p class="">
       ${
         activeUsername === data.username

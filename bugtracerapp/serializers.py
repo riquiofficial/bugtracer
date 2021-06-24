@@ -9,6 +9,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['username', 'profile_picture']
 
 
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = ['id', 'name']
+
+
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Project
@@ -33,9 +40,9 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
                   'bio', 'date_joined', 'groups']
 
     def get_groups(self, obj):
-        groups = []
+        groups = {}
         for group in obj.groups.all():
-            groups.append(group.name)
+            groups[group.name] = User.objects.filter(groups=group).count()
         return groups
 
 

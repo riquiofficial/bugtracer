@@ -182,6 +182,11 @@ class Messages(viewsets.ModelViewSet):
         return Message.objects.filter(receiver=self.request.user).order_by('-timestamp')
 
 
+class Teams(viewsets.ModelViewSet):
+    serializer_class = GroupSerializer
+    queryset = Group.objects.all()
+
+
 class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
     paginate_by = 10

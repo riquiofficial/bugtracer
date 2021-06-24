@@ -10,6 +10,7 @@ router.register(r'solved', views.Solved, 'Solved'),
 router.register(r"active", views.ActiveBugs, 'Bugs'),
 router.register(r'projects', views.Projects, 'Projects')
 router.register(r'profile', views.Profile, 'Profile')
+router.register(r'teams', views.Teams, 'Teams')
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('newMessage', views.index, name='new_message'),
     path("profile/<str:slug>", views.index, name="profile"),
     path('myTeams', views.index, name="my_teams"),
+    path('team/<str:slug>', views.index, name='team'),
 
     # django rest framework
     path('api/', include(router.urls)),

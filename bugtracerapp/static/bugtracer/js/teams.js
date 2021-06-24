@@ -11,10 +11,10 @@ teamsButton.addEventListener("click", () => {
 
 function renderTeamsHtml(data) {
   return `<ul class="list-group">
-    ${data.groups.map(
-      (group) => `
+    ${Object.entries(data.groups).map(
+      ([key, value]) => `
     <li class="list-group-item d-flex justify-content-between align-items-center">
-    ${group}<span class="badge badge-primary badge-pill">14</span>
+    ${key}<span class="badge badge-primary badge-pill">Members: ${value}</span>
     </li>`
     )}
     </ul>`;
@@ -27,11 +27,10 @@ export function fetchTeams() {
     .then(showPage("jsContent"))
     .then(
       history.pushState(
-        { section: baseUrl + "/myTeams/" },
+        { section: baseUrl + "/myTeams" },
         null,
-        baseUrl + "/myTeams/"
+        baseUrl + "/myTeams"
       )
     )
-    .then(console.log("successfully fetched"))
     .catch((err) => console.log(err));
 }
