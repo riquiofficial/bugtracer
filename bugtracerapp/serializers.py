@@ -10,10 +10,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    users = serializers.SerializerMethodField('get_users')
 
     class Meta:
         model = Group
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'users']
+
+    def get_users(self, obj):
+        user_list = []
+        for user in User.objects.filter(groups=obj):
+            user_list.append(user.username)
+        return user_list
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
