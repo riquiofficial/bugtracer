@@ -25,6 +25,7 @@ urlpatterns = [
     path('alerts', views.index, name='alerts'),
     path('newMessage', views.index, name='new_message'),
     path("profile/<str:slug>", views.index, name="profile"),
+    path('myTeams', views.index, name="my_teams"),
 
     # django rest framework
     path('api/', include(router.urls)),

@@ -14,8 +14,10 @@ const profilePage = (data) => {
       />
   
       <h1 class="h1 text-gray-800 my-5">${data.username}</h1>
-      <h2 class="mb-4">Bio:</h2>
+      <h4 class="mb-4">Bio:</h4>
       <p>${data.bio}</p>
+      <h4>Teams</h4>
+      <ul class="mb-4">${data.groups.map((group) => `<li>${group}</li>`)}</ul>
       <p class="">
       ${
         activeUsername === data.username
@@ -24,8 +26,8 @@ const profilePage = (data) => {
             }">Edit Profile</a>`
           : ""
       }
-        
       </p>
+      
     </div>`;
 };
 

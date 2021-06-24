@@ -5,6 +5,7 @@ import "./bugs.js";
 import "./projects.js";
 import "./search.js";
 import "./profile.js";
+import "./teams.js";
 
 // utilities/api
 import { showPage } from "./util.js";
@@ -13,6 +14,7 @@ import { fetchProjects } from "./projects.js";
 import { fetchMessagesPage, sendMessage } from "./messages.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
+import { fetchTeams } from "./teams.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // check browser url in case of refresh or direct url to page
@@ -47,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const requestedProfile = path.split("/").pop();
     fetchProfile(requestedProfile);
     showPage("jsContent");
+  } else if (path == "/myTeams") {
+    fetchTeams();
+    showPage("jsContent");
   }
 
   // browser history back/forward
@@ -80,6 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (prevPage.section.match(/^\/profile\//)) {
       const requestedProfile = prevPage.section.split("/").pop();
       fetchProfile(requestedProfile);
+    } else if (prevPage.section == baseUrl + "/myTeams") {
+      fetchTeams();
+      showPage("jsContent");
     }
   };
 });

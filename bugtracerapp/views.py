@@ -120,7 +120,7 @@ def index(request, slug=""):
     this_months_bugs = []
     all_projects = []
 
-    # for each group user is in, add active bug
+    # for each group user is in, add active, solved, this months bugs and projects
     for group in groups:
         active_bugs.append(Bug.objects.filter(
             project__group=group).order_by('priority', '-date'))

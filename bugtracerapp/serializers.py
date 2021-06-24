@@ -25,11 +25,18 @@ class ProjectDetailSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    groups = serializers.SerializerMethodField('get_groups')
 
     class Meta:
         model = User
         fields = ['username', 'profile_picture',
-                  'bio', 'date_joined']
+                  'bio', 'date_joined', 'groups']
+
+    def get_groups(self, obj):
+        groups = []
+        for group in obj.groups.all():
+            groups.append(group.name)
+        return groups
 
 
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -51,7 +58,6 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
             return False
 
     def update(self, instance, validated_data):
-
         instance.read.add(self.context['request'].user)
         instance.save()
         return instance
