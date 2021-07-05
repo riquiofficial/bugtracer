@@ -40,9 +40,12 @@ export function fetchUserTeams() {
 
 function renderTeamPageHtml(data) {
   console.log(data);
-  return `<h1 class="dynamic-content">${data.name}</h1>
-    <ul>${data.users
-      .map((user) => `<li class="dynamic-content">${user}</li>`)
+  return `<h1 class="dynamic-content ml-2 mb-4">${data.name}</h1>
+    <ul class="list-group">${data.users
+      .map(
+        (user) =>
+          `<a href="${baseUrl}/profile/${user}"><li class="dynamic-content list-group-item">${user}</li></a>`
+      )
       .join("")}
       </ul>
   `;
