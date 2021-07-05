@@ -14,7 +14,7 @@ function renderTeamsHtml(data) {
     ${Object.entries(data.groups)
       .map(
         ([key, value]) => `
-    <li data-id="${value.id}" style="cursor: pointer" class="mb-0 list-group-item dynamic-content d-flex justify-content-between align-items-center">
+    <li data-id="${value.id}" style="cursor: pointer" class="team-item mb-0 list-group-item dynamic-content d-flex justify-content-between align-items-center">
     ${key}<span class="badge badge-primary badge-pill">Members: ${value.users}</span>
     </li>`
       )
@@ -34,12 +34,28 @@ export function fetchUserTeams() {
         baseUrl + "/myTeams"
       )
     )
+    .then(setTimeout(() => activateTeamEventListeners(), 1500))
     .catch((err) => console.log(err));
 }
 
-function renderTeamPageHtml(data) {}
+function renderTeamPageHtml(data) {
+  console.log(data);
+  return `<h1 class="dynamic-content">${data.name}</h1>
+    <ul>${data.users
+      .map((user) => `<li class="dynamic-content">${user}</li>`)
+      .join("")}
+      </ul>
+  `;
+}
 
-function fetchTeamPage(id) {
+function activateTeamEventListeners() {
+  const teams = document.getElementsByClassName("team-item");
+  [...teams].forEach((team) =>
+    team.addEventListener("click", (e) => fetchTeamPage(e.target.dataset.id))
+  );
+}
+
+export function fetchTeamPage(id) {
   fetch(`/api/teams/${id}/?format=json`)
     .then((response) => response.json())
     .then((data) => (jsContent.innerHTML = renderTeamPageHtml(data)))

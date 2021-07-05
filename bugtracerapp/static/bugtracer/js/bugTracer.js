@@ -14,7 +14,7 @@ import { fetchProjects } from "./projects.js";
 import { fetchMessagesPage, sendMessage } from "./messages.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
-import { fetchUserTeams } from "./teams.js";
+import { fetchTeamPage, fetchUserTeams } from "./teams.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // check browser url in case of refresh or direct url to page
@@ -52,6 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path == "/myTeams") {
     fetchUserTeams();
     showPage("jsContent");
+  } else if (path.match(/^\/team\//)) {
+    const requestedTeamId = path.split("/").pop();
+    fetchTeamPage(requestedTeamId);
+    showPage("jsContent");
   }
 
   // browser history back/forward
@@ -85,8 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (prevPage.section.match(/^\/profile\//)) {
       const requestedProfile = prevPage.section.split("/").pop();
       fetchProfile(requestedProfile);
+      showPage("jsContent");
     } else if (prevPage.section == baseUrl + "/myTeams") {
       fetchUserTeams();
+      showPage("jsContent");
+    } else if (prevPage.section.match(/^\/team\//)) {
+      const requestedTeamId = prevPage.section.split("/").pop();
+      fetchTeamPage(requestedTeamId);
       showPage("jsContent");
     }
   };
