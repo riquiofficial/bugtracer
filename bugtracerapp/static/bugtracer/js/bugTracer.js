@@ -14,7 +14,7 @@ import { fetchProjects } from "./projects.js";
 import { fetchMessagesPage, sendMessage } from "./messages.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
-import { fetchTeams } from "./teams.js";
+import { fetchUserTeams } from "./teams.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // check browser url in case of refresh or direct url to page
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchProfile(requestedProfile);
     showPage("jsContent");
   } else if (path == "/myTeams") {
-    fetchTeams();
+    fetchUserTeams();
     showPage("jsContent");
   }
 
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const requestedProfile = prevPage.section.split("/").pop();
       fetchProfile(requestedProfile);
     } else if (prevPage.section == baseUrl + "/myTeams") {
-      fetchTeams();
+      fetchUserTeams();
       showPage("jsContent");
     }
   };

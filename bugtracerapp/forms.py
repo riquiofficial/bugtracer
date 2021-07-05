@@ -29,6 +29,11 @@ class BugForm(forms.ModelForm):
             'project': forms.Select(attrs={'class': 'form-control mb-2'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BugForm, self).__init__(*args, **kwargs)
+        self.fields['project'].queryset = self.request.user.groups.all()
+
 
 class ProjectForm(forms.ModelForm):
 

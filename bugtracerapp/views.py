@@ -25,7 +25,7 @@ import datetime
 
 @login_required(login_url='login')
 def index(request, slug=""):
-    bug_form = BugForm
+    bug_form = BugForm(request.POST, request=request)
     project_form = ProjectForm(request.POST, request=request)
     message_form = MessageForm(request.POST, request=request)
     group_form = GroupForm
@@ -201,6 +201,7 @@ class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
         for group in groups:
             queryset.append(Bug.objects.filter(
                 project__group=group, solved=False).order_by('priority', '-date'))
+        print(groups)
         return queryset[0]
 
 

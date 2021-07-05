@@ -16,6 +16,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ['id', 'name', 'users']
 
+    # get all users in requested team
     def get_users(self, obj):
         user_list = []
         for user in User.objects.filter(groups=obj):
@@ -49,7 +50,8 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     def get_groups(self, obj):
         groups = {}
         for group in obj.groups.all():
-            groups[group.name] = User.objects.filter(groups=group).count()
+            groups[group.name] = {"id": Group.objects.get(
+                name=group).id, "users": User.objects.filter(groups=group).count()}
         return groups
 
 
