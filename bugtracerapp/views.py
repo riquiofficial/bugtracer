@@ -25,6 +25,7 @@ import datetime
 
 @login_required(login_url='login')
 def index(request, slug=""):
+    # pass request object in to forms to access user data
     bug_form = BugForm(request.POST, request=request)
     project_form = ProjectForm(request.POST, request=request)
     message_form = MessageForm(request.POST, request=request)

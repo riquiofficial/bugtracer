@@ -32,7 +32,8 @@ class BugForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(BugForm, self).__init__(*args, **kwargs)
-        self.fields['project'].queryset = self.request.user.groups.all()
+        self.fields['project'].queryset = Project.objects.filter(
+            contributors=self.request.user)
 
 
 class ProjectForm(forms.ModelForm):
