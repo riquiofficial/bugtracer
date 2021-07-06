@@ -4,13 +4,14 @@ const teamsButton = document.getElementById("teams");
 const jsContent = document.getElementById("jsContent");
 const baseUrl = window.location.origin;
 const activeUser = document.getElementById("activeUsername").innerText;
+const submitTeamForm = document.getElementById("submitTeamForm");
 
 teamsButton.addEventListener("click", () => {
   fetchUserTeams();
 });
 
 function renderTeamsHtml(data) {
-  return `<ul class="list-group">
+  return `<button class="btn btn-primary m-3 dynamic-content" id="newTeam">New Team</button><ul class="list-group">
     ${Object.entries(data.groups)
       .map(
         ([key, value]) => `
@@ -34,8 +35,24 @@ export function fetchUserTeams() {
         baseUrl + "/myTeams"
       )
     )
-    .then(setTimeout(() => activateTeamEventListeners(), 1500))
+    .then(
+      setTimeout(() => {
+        activateTeamEventListeners(), activateNewTeamButton();
+      }, 1500)
+    )
     .catch((err) => console.log(err));
+}
+
+function activateNewTeamButton() {
+  const newTeamButton = document.getElementById("newTeam");
+  newTeamButton.addEventListener("click", () => {
+    showPage("teamForm");
+    history.pushState(
+      { section: baseUrl + `/newTeam` },
+      null,
+      baseUrl + `/newTeam`
+    );
+  });
 }
 
 function renderTeamPageHtml(data) {

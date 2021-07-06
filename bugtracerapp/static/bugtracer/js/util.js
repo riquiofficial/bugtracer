@@ -11,12 +11,14 @@ export function showPage(page) {
   const jsContent = document.getElementById("jsContent");
   const messageForm = document.getElementById("messageForm");
   const dashboard = document.getElementById("dashboard");
+  const teamForm = document.getElementById("teamForm");
 
   jsContent.style.display = "none";
   bugForm.style.display = "none";
   projectForm.style.display = "none";
   messageForm.style.display = "none";
   dashboard.style.display = "none";
+  teamForm.style.display = "none";
 
   // nav styles
   const navBugs = document.getElementById("nav-bugs").classList;
@@ -49,6 +51,8 @@ export function showPage(page) {
   } else if (page == "allProjects") {
     jsContent.style.display = "block";
     navProjects.add("active");
+  } else if (page == "teamForm") {
+    teamForm.style.display = "block";
   }
 }
 

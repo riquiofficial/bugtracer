@@ -281,7 +281,6 @@ export function fetchMessagesPage(pageNumber) {
 }
 
 export function sendMessage() {
-  console.log("clicked");
   const messageCsrf = document.getElementsByName("csrfmiddlewaretoken")[2];
   const content = document.getElementById("messageContent");
 
@@ -349,7 +348,6 @@ function activateMessagesClickEvent() {
 }
 
 function messageClick(e) {
-  console.log("clicked");
   const id = e.target.dataset.id;
   const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 

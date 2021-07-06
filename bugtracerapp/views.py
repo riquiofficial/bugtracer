@@ -138,8 +138,9 @@ def index(request, slug=""):
 
     if len(solved_bugs):
         total_bugs += solved_bugs[0].count()
-        solved_bugs_percentage = int(
-            round(solved_bugs[0].count() / total_bugs * 100))
+        if solved_bugs[0].count() > 0:
+            solved_bugs_percentage = int(
+                round(solved_bugs[0].count() / total_bugs * 100))
 
     if len(this_months_bugs):
         this_months_bugs = this_months_bugs[0].count()
@@ -311,5 +312,7 @@ class Register(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         Alert.objects.create(user=self.object,
-                             content=f"Welcome to BugTracer, {self.object.username}! Get started by editing your profile or adding some projects and bugs.")
+                             content=f"Welcome to BugTracer, {self.object.username}! Get started by editing your profile or adding some projects and bugs. We have created a default team where you can add users to join you and create projects!")
+        new_group = Group.objects.create(name=f"{self.object.username}'s Team")
+        self.object.groups.add(new_group)
         return HttpResponseRedirect(self.get_success_url())

@@ -10,13 +10,13 @@ router.register(r'solved', views.Solved, 'Solved'),
 router.register(r"active", views.ActiveBugs, 'Bugs'),
 router.register(r'projects', views.Projects, 'Projects')
 router.register(r'profile', views.Profile, 'Profile')
-router.register(r'teams', views.Teams, 'Teams')
+router.register(r'teams', views.Teams, 'Teams'),
 
 urlpatterns = [
     path('', views.index, name='index'),
 
     # dynamic javascript pages
-    path('activeBugs', views.index, name="index"),
+    path('activeBugs', views.index, name="active_bugs"),
     path('resolvedBugs', views.index, name="resolved_bugs"),
     path('registerBug', views.index, name="register_bug"),
     path('allProjects', views.index, name="projects"),
@@ -28,6 +28,7 @@ urlpatterns = [
     path("profile/<str:slug>", views.index, name="profile"),
     path('myTeams', views.index, name="my_teams"),
     path('team/<str:slug>', views.index, name='team'),
+    path('newTeam', views.index, name="new_team"),
 
     # django rest framework
     path('api/', include(router.urls)),

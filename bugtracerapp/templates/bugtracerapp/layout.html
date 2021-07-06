@@ -506,14 +506,14 @@
           </div>
         </div>
 
-        <div class="dynamic-content" id="groupForm" style="display: none">
+        <div class="dynamic-content" id="teamForm" style="display: none">
             <div class="container-fluid" >
                 <h1 class="h3 text-gray-800 my-5">Create a New Team</h1>
               </div>
               <div class="container-fluid">
                 <form>
                   {%csrf_token%} {{group_form}}
-                  <button type="button" id="submitGroupForm" class="btn btn-primary mt-4" >Submit</button>
+                  <button type="button" id="submitTeamForm" class="btn btn-primary mt-4 mb-4" >Submit</button>
                 </form>
               </div>
             </div>

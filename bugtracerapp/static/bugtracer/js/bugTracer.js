@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const requestedTeamId = path.split("/").pop();
     fetchTeamPage(requestedTeamId);
     showPage("jsContent");
+  } else if (path == "/newTeam") {
+    showPage("teamForm");
   }
 
   // browser history back/forward
@@ -97,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const requestedTeamId = prevPage.section.split("/").pop();
       fetchTeamPage(requestedTeamId);
       showPage("jsContent");
+    } else if (prevPage.section == "/newTeam") {
+      showPage("teamForm");
     }
   };
 });
