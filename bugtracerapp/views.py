@@ -126,7 +126,7 @@ def index(request, slug=""):
         active_bugs.append(Bug.objects.filter(
             project__group=group).order_by('priority', '-date'))
         solved_bugs.append(Bug.objects.filter(
-            project__group=group).order_by('priority', '-date'))
+            project__group=group, solved=True).order_by('priority', '-date'))
         this_months_bugs.append(Bug.objects.filter(
             project__group=group, date__month=datetime.datetime.now().month))
         all_projects.append(Project.objects.filter(group=group))
