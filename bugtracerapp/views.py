@@ -196,20 +196,17 @@ class ActiveBugs(LoginRequiredMixin, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content', 'author__username']
+    lookup_field = 'id'
 
+    # only get bugs in users team which have not been solved
     def get_queryset(self):
-        groups = self.request.user.groups.all()
-        queryset = []
-        for group in groups:
-            queryset.append(Bug.objects.filter(
-                project__group=group, solved=False).order_by('priority', '-date'))
-        print(groups)
-        return queryset[0]
+        queryset = Bug.objects.filter(
+            project__group__in=self.request.user.groups.all()).exclude(solved=True).order_by('priority', '-date')
+        return queryset
 
 
 class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
     login_url = 'login'
-    queryset = Bug.objects.filter(solved=True)
     ordering = ['-date']
     paginate_by = 10
     serializer_class = BugSerializer
@@ -217,13 +214,11 @@ class Solved(LoginRequiredMixin, viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content', 'author__username']
 
+    # only get bugs in users team which have been solved
     def get_queryset(self):
-        groups = self.request.user.groups.all()
-        queryset = []
-        for group in groups:
-            queryset.append(Bug.objects.filter(
-                project__group=group, solved=True).order_by('priority', '-date'))
-        return queryset[0]
+        queryset = Bug.objects.filter(
+            project__group__in=self.request.user.groups.all()).exclude(solved=False).order_by('-last_modified')
+        return queryset
 
 
 class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -240,6 +235,7 @@ class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
         queryset = []
         for group in groups:
             queryset.append(Project.objects.filter(group=group))
+        print(queryset, queryset[0])
         return queryset[0]
 
 

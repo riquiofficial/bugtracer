@@ -80,10 +80,9 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    # get contributors for a project
     def get_user_profiles(self):
-        print("getting profiles...")
         user_list = []
         for user in self.contributors.all():
             user_list.append(user)
-        print(user_list)
         return user_list
