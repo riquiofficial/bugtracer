@@ -6,6 +6,21 @@ const baseUrl = window.location.origin;
 const activeUser = document.getElementById("activeUsername").innerText;
 const submitTeamForm = document.getElementById("submitTeamForm");
 
+const invitation = document.getElementsByName("accept_invite");
+const decline = document.getElementsByName("decline_invitation");
+
+if (invitation) {
+  [...invitation].forEach.addEventListener("click", (e) =>
+    console.log(e.target.dataset.title)
+  );
+}
+
+if (decline) {
+  [...decline].forEach.addEventListener("click", (e) =>
+    console.log(e.target.dataset.user)
+  );
+}
+
 teamsButton.addEventListener("click", () => {
   fetchUserTeams();
 });
@@ -68,7 +83,7 @@ function activateNewTeamButton() {
 
 function renderTeamPageHtml(data) {
   console.log(data);
-  return `<h1 class="dynamic-content ml-2 mb-4">${data.name}</h1>
+  return `<h1 class="dynamic-content ml-2 mb-4" id="team_name">${data.name}</h1>
       <button class="dynamic-content m-2 btn btn-success" id="invite_user_button">Invite</button>
     <ul class="list-group">${data.users
       .map(
@@ -87,6 +102,39 @@ function activateTeamEventListeners() {
   );
 }
 
+function activateInviteEventListener() {
+  const invite = document.getElementById("invite_user_button");
+  invite.addEventListener("click", () => renderInvitePage());
+}
+
+function renderInvitePage() {
+  const teamName = document.getElementById("team_name").innerText;
+  jsContent.innerHTML = `
+  <div class="mx-3 dynamic-content">
+  <h3 class="mb-4">Invite User to ${teamName}</h3>
+  <p>Please enter a username:</p>
+  <input class="form-control mb-2" id="invite_user" />
+  <button class="btn btn-primary mb-2" id="invite_user_button">Invite</button>
+  </div>
+  `;
+  activateUserInviteButton(teamName);
+}
+
+function activateUserInviteButton(teamName) {
+  const inviteButton = document.getElementById("invite_user_button");
+  const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+  inviteButton.addEventListener("click", () => {
+    const username = document.getElementById("invite_user").value;
+
+    let inviteUserForm = new FormData();
+    inviteUserForm.append("username", username);
+    inviteUserForm.append("invite_group_name", teamName);
+
+    submitForm(csrf, inviteUserForm);
+  });
+}
+
 export function fetchTeamPage(id) {
   fetch(`/api/teams/${id}/?format=json`)
     .then((response) => response.json())
@@ -99,5 +147,6 @@ export function fetchTeamPage(id) {
         baseUrl + `/team/${id}`
       )
     )
+    .then(() => activateInviteEventListener())
     .catch((err) => console.log(err));
 }

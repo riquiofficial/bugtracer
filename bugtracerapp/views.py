@@ -37,6 +37,7 @@ def index(request, slug=""):
         # check all fields filled out
         for key, value in data.items():
             if value == "":
+                print(data)
                 return JsonResponse({"error": f"Please fill all fields, {key} was missing"}, status=401)
 
         # New Bug Form Submission. if data contains priority field it is bug form
@@ -118,10 +119,26 @@ def index(request, slug=""):
                 new_group = Group.objects.create(name=data['group_name'])
                 new_group.save()
                 request.user.groups.add(new_group)
-                return JsonResponse({'message': 'Team successfully created!'})
+                return JsonResponse({'message': 'Team successfully created!'}, status=201)
+
+        elif "invite_group_name" in data:
+            try:
+
+                invited_user = User.objects.get(username=data["username"])
+                invited_group = Group.objects.get(
+                    name=data["invite_group_name"])
+                Alert.objects.create(
+                    user=invited_user, content=f'{request.user.username} has invited you to join {invited_group}!<br /><button class="btn btn-success mr-2 btn-sm" data-user="{invited_user.username}" data-title="{invited_group.name}" name="accept_invite">Accept</button><button class="btn btn-secondary btn-sm" data-user="{invited_user.username}" data-title="{invited_group.name}" name="decline_invite">Decline</button>')
+                return JsonResponse({"message": "invitation successful"}, status=201)
+
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'User does not exist'}, status=404)
+
+            except Group.DoesNotExist:
+                return JsonResponse({'error': 'Team does not exist'}, status=404)
 
         else:
-            return JsonResponse({'error': 'not a valid form'})
+            return JsonResponse({'error': 'not a valid form'}, status=403)
 
     # dashboard data
 

@@ -86,6 +86,9 @@ export function submitForm(csrf, formData) {
   // new team form
   const teamForm = document.getElementById("group_name");
 
+  // invite user form
+  const username = document.getElementById("invite_user");
+
   fetch(window.location.origin, {
     method: "POST",
     mode: "same-origin",
@@ -98,33 +101,22 @@ export function submitForm(csrf, formData) {
   })
     .then((response) => response.json())
     .then((result) => alert(result.message ? result.message : result.error))
-    .then(() => clearBugForm())
-    .then(() => clearProjectForm())
-    .then(() => clearMessageForm())
-    .then(() => clearTeamForm())
+    .then(() => clearAllForms())
     .catch((err) => console.log(err));
 
-  function clearBugForm() {
+  function clearAllForms() {
     title.value = "";
     content.value = "";
     priority.value = "";
     project.value = "";
-  }
-
-  function clearProjectForm() {
     projectName.value = "";
     contributors.value = "";
     description.value = "";
     logo.value = "";
-  }
-
-  function clearMessageForm() {
     messageContent.value = "";
     receiver.value = "";
-  }
-
-  function clearTeamForm() {
     teamForm.value = "";
+    username.value = "";
   }
 }
 
