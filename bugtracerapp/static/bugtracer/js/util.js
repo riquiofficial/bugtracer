@@ -83,6 +83,9 @@ export function submitForm(csrf, formData) {
   const messageContent = document.getElementById("messageContent");
   const receiver = document.getElementById("id_receiver");
 
+  // new team form
+  const teamForm = document.getElementById("group_name");
+
   fetch(window.location.origin, {
     method: "POST",
     mode: "same-origin",
@@ -98,6 +101,7 @@ export function submitForm(csrf, formData) {
     .then(() => clearBugForm())
     .then(() => clearProjectForm())
     .then(() => clearMessageForm())
+    .then(() => clearTeamForm())
     .catch((err) => console.log(err));
 
   function clearBugForm() {
@@ -117,6 +121,10 @@ export function submitForm(csrf, formData) {
   function clearMessageForm() {
     messageContent.value = "";
     receiver.value = "";
+  }
+
+  function clearTeamForm() {
+    teamForm.value = "";
   }
 }
 

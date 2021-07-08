@@ -102,12 +102,23 @@ def index(request, slug=""):
                 # new message form submits user pks
                 try:
                     new_message.receiver.add(receiver)
-                # reply messages submit usernames
+                # reply messages submits usernames
                 except ValueError:
                     recipient = User.objects.get(username=receiver)
                     new_message.receiver.add(recipient)
 
             return JsonResponse({'message': 'successfully sent'})
+
+        elif "group_name" in data:
+            try:
+                Group.objects.get(name=data['group_name'])
+                return JsonResponse({'error': 'Team title already exists!'}, status=406)
+
+            except Group.DoesNotExist:
+                new_group = Group.objects.create(name=data['group_name'])
+                new_group.save()
+                request.user.groups.add(new_group)
+                return JsonResponse({'message': 'Team successfully created!'})
 
         else:
             return JsonResponse({'error': 'not a valid form'})
@@ -165,7 +176,7 @@ def index(request, slug=""):
                                                         "unread_messages": unread_messages, "total_projects": total_projects,
                                                         'this_months_bugs': this_months_bugs, 'bugs_per_project': bugs_per_project, "groups": groups, 'group_form': group_form})
 
-# rest framework classes
+# REST FRAMEWORK CLASSES
 
 
 class Alerts(viewsets.ModelViewSet):
@@ -246,7 +257,7 @@ class Profile(LoginRequiredMixin, viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'username'
 
-# edit views
+# EDIT VIEWS
 
 
 class UpdateProject(LoginRequiredMixin, UpdateView):

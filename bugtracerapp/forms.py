@@ -9,7 +9,7 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ['name']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'})
+            'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'group_name'})
         }
 
 

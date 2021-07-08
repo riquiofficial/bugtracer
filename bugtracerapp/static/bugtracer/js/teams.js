@@ -1,4 +1,4 @@
-import { showPage } from "./util.js";
+import { showPage, submitForm } from "./util.js";
 
 const teamsButton = document.getElementById("teams");
 const jsContent = document.getElementById("jsContent");
@@ -9,6 +9,17 @@ const submitTeamForm = document.getElementById("submitTeamForm");
 teamsButton.addEventListener("click", () => {
   fetchUserTeams();
 });
+
+submitTeamForm.addEventListener("click", createNewTeam);
+
+function createNewTeam() {
+  const groupName = document.getElementById("group_name").value;
+  const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+  let teamFormFields = new FormData();
+  teamFormFields.append("group_name", groupName);
+  submitForm(csrf, teamFormFields);
+}
 
 function renderTeamsHtml(data) {
   return `<button class="btn btn-primary m-3 dynamic-content" id="newTeam">New Team</button><ul class="list-group">
@@ -58,6 +69,7 @@ function activateNewTeamButton() {
 function renderTeamPageHtml(data) {
   console.log(data);
   return `<h1 class="dynamic-content ml-2 mb-4">${data.name}</h1>
+      <button class="dynamic-content m-2 btn btn-success" id="invite_user_button">Invite</button>
     <ul class="list-group">${data.users
       .map(
         (user) =>
