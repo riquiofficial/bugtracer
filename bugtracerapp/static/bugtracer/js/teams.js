@@ -6,21 +6,6 @@ const baseUrl = window.location.origin;
 const activeUser = document.getElementById("activeUsername").innerText;
 const submitTeamForm = document.getElementById("submitTeamForm");
 
-const invitation = document.getElementsByName("accept_invite");
-const decline = document.getElementsByName("decline_invitation");
-
-if (invitation) {
-  [...invitation].forEach.addEventListener("click", (e) =>
-    console.log(e.target.dataset.title)
-  );
-}
-
-if (decline) {
-  [...decline].forEach.addEventListener("click", (e) =>
-    console.log(e.target.dataset.user)
-  );
-}
-
 teamsButton.addEventListener("click", () => {
   fetchUserTeams();
 });
@@ -82,7 +67,6 @@ function activateNewTeamButton() {
 }
 
 function renderTeamPageHtml(data) {
-  console.log(data);
   return `<h1 class="dynamic-content ml-2 mb-4" id="team_name">${data.name}</h1>
       <button class="dynamic-content m-2 btn btn-success" id="invite_user_button">Invite</button>
     <ul class="list-group">${data.users

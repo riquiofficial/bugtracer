@@ -86,9 +86,6 @@ export function submitForm(csrf, formData) {
   // new team form
   const teamForm = document.getElementById("group_name");
 
-  // invite user form
-  const username = document.getElementById("invite_user");
-
   fetch(window.location.origin, {
     method: "POST",
     mode: "same-origin",
@@ -116,7 +113,6 @@ export function submitForm(csrf, formData) {
     messageContent.value = "";
     receiver.value = "";
     teamForm.value = "";
-    username.value = "";
   }
 }
 

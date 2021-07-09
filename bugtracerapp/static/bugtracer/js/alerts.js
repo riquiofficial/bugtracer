@@ -1,4 +1,9 @@
-import { showPage, createPagination, activatePaginationLinks } from "./util.js";
+import {
+  showPage,
+  createPagination,
+  activatePaginationLinks,
+  submitForm,
+} from "./util.js";
 
 const alerts = document.getElementById("alerts");
 const unread = document.getElementById("alert-counter");
@@ -20,9 +25,44 @@ function fetchAlerts() {
     .then(
       setTimeout(() => {
         activateAlertsClickEvent();
+        activateInviteButtons();
       }, 1500)
     )
     .catch((err) => console.log(err));
+}
+
+function activateInviteButtons() {
+  const inviteButtons = document.getElementsByName("accept_invite");
+  const declineButtons = document.getElementsByName("decline_invite");
+
+  if (inviteButtons.length) {
+    inviteButtons.forEach((button) =>
+      button.addEventListener("click", (e) => {
+        const team = e.target.dataset.title;
+        const invitedUser = e.target.dataset.user;
+        const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+        const formData = new FormData();
+        formData.append("invited_user", invitedUser);
+        formData.append("invite_to_team", team);
+
+        submitForm(csrf, formData);
+      })
+    );
+    declineButtons.forEach((button) =>
+      button.addEventListener("click", (e) => {
+        const id = e.target.dataset.id;
+        const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
+
+        console.log(id);
+        // const formData = new FormData();
+        // formData.append("declined_user", invitedUser);
+        // formData.append("invite_to_team", team);
+
+        // submitForm(csrf, formData);
+      })
+    );
+  }
 }
 
 function populateNavAlert(html) {
@@ -183,7 +223,6 @@ function alertClick(e) {
 
   const navContent = document.getElementById(`alert-content-${id}`);
   const li = document.getElementById(`alert-${id}`);
-  console.log(e.target);
   // if unread alert, send request to make read and remove unread styles
   if (
     e.target.classList.contains("list-group-item-primary") ||
