@@ -14,7 +14,13 @@ The app can be used on:
 
 https://bug-tracer.herokuapp.com
 
-### Dependencies
+### Teams
+
+To use the app, you must create a team. This is done by default when the user registers. From here, you can start projects, and add bugs to those projects. You can also invite members to your team if you know their username. Teams are private and invite only, however, users can view your team names if they visit your profile.
+
+To create a new team, you can click your profile picture in the nav bar, select "My Teams" and click "New Team". You will be prompted to enter your new team's name. As long as this does not conflict with someone elses team name, your new team will be created.
+
+## Dependencies
 
 - Python v3.8
 - Django v2.2.5
