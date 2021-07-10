@@ -156,7 +156,6 @@ def index(request, slug=""):
         elif "declined_alert_id" in data:
             try:
                 Alert.objects.filter(pk=data['declined_alert_id']).delete()
-
             except:
                 return JsonResponse({'error': 'There was a problem declining your invitation'}, status=404)
 

@@ -52,9 +52,12 @@ function activateInviteButtons() {
 
         const alertModal = document.getElementById(`navAlert${alertId}`);
         const navAlert = document.getElementById(`navbarAlert${alertId}`);
+        const cancelButton = document.getElementById(`obj-cancel-${alertId}`);
 
-        alertModal.style.display = "none";
-        navAlert.style.display = "none";
+        // close modal and remove alert from dom
+        cancelButton.click();
+        alertModal.remove();
+        navAlert.remove();
       })
     );
     declineButtons.forEach((button) =>
@@ -69,9 +72,12 @@ function activateInviteButtons() {
 
         const alertModal = document.getElementById(`navAlert${alertId}`);
         const navAlert = document.getElementById(`navbarAlert${alertId}`);
+        const cancelButton = document.getElementById(`obj-cancel-${alertId}`);
 
-        alertModal.style.display = "none";
-        navAlert.style.display = "none";
+        // close modal and remove alert from dom
+        cancelButton.click();
+        alertModal.remove();
+        navAlert.remove();
       })
     );
   }
@@ -103,7 +109,7 @@ function createHtmlAlert(obj) {
           </button>
       </div>
       <div class="modal-body" id="obj-content-${obj.id}">
-      <p>${obj.content}</p>
+      <p data-id="${obj.id}">${obj.content}</p>
         <p class="mb-0 text-right"><small>${time}</small></p>
       </div>
       <div class="modal-footer">

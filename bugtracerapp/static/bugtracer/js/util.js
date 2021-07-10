@@ -113,6 +113,11 @@ export function submitForm(csrf, formData) {
     messageContent.value = "";
     receiver.value = "";
     teamForm.value = "";
+
+    // if invite user form rendered, clear text
+    if (document.getElementById("invite_user")) {
+      document.getElementById("invite_user").value = "";
+    }
   }
 }
 
