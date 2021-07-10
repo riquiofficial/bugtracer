@@ -146,10 +146,19 @@ def index(request, slug=""):
                 invited_user = User.objects.get(username=data['invited_user'])
                 invited_group = Group.objects.get(name=data['invite_to_team'])
                 invited_user.groups.add(invited_group)
+                nav_alert = Alert.objects.filter(pk=data['alert_id'])
+                nav_alert.delete()
                 return JsonResponse({'message': f'successfully joined {invited_group}'}, status=200)
 
             except:
                 return JsonResponse({'error': 'There was a problem with your invitation'}, status=404)
+
+        elif "declined_alert_id" in data:
+            try:
+                Alert.objects.filter(pk=data['declined_alert_id']).delete()
+
+            except:
+                return JsonResponse({'error': 'There was a problem declining your invitation'}, status=404)
 
         else:
             return JsonResponse({'error': 'not a valid form'}, status=403)

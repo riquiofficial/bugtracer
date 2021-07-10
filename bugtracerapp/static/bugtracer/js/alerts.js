@@ -40,26 +40,38 @@ function activateInviteButtons() {
       button.addEventListener("click", (e) => {
         const team = e.target.dataset.title;
         const invitedUser = e.target.dataset.user;
+        const alertId = e.target.parentElement.dataset.id;
         const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
         const formData = new FormData();
         formData.append("invited_user", invitedUser);
         formData.append("invite_to_team", team);
+        formData.append("alert_id", alertId);
 
         submitForm(csrf, formData);
+
+        const alertModal = document.getElementById(`navAlert${alertId}`);
+        const navAlert = document.getElementById(`navbarAlert${alertId}`);
+
+        alertModal.style.display = "none";
+        navAlert.style.display = "none";
       })
     );
     declineButtons.forEach((button) =>
       button.addEventListener("click", (e) => {
-        const id = e.target.dataset.id;
+        const alertId = e.target.parentElement.dataset.id;
         const csrf = document.getElementsByName("csrfmiddlewaretoken")[0];
 
-        console.log(id);
-        // const formData = new FormData();
-        // formData.append("declined_user", invitedUser);
-        // formData.append("invite_to_team", team);
+        const formData = new FormData();
+        formData.append("declined_alert_id", alertId);
 
-        // submitForm(csrf, formData);
+        submitForm(csrf, formData);
+
+        const alertModal = document.getElementById(`navAlert${alertId}`);
+        const navAlert = document.getElementById(`navbarAlert${alertId}`);
+
+        alertModal.style.display = "none";
+        navAlert.style.display = "none";
       })
     );
   }
@@ -80,7 +92,7 @@ function createHtmlAlert(obj) {
   }
 
   const container = document.getElementById("alertModals");
-  container.innerHTML += `<div id="navalert${obj.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  container.innerHTML += `<div id="navAlert${obj.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content" >
       <div class="modal-header">
@@ -103,7 +115,9 @@ function createHtmlAlert(obj) {
 
   //create element
   return `
-        <a data-id="${obj.id}" data-toggle="modal" data-target="#navalert${
+        <a id="navbarAlert${obj.id}" data-id="${
+    obj.id
+  }" data-toggle="modal" data-target="#navAlert${
     obj.id
   }" class="dropdown-item d-flex align-items-center alert-item alert-list-item ${
     obj.read ? "" : "font-weight-bold"
