@@ -1,6 +1,7 @@
-django
-django-rest-framework
-django-environ
-whitenoise
-gunicorn
-pillow
+django==v2.2.5
+django-rest-framework==3.12.2
+django-environ==0.4.5
+dj-database-url==0.5.0
+whitenoise==5.2
+gunicorn==20.1.0
+pillow==8.3.1

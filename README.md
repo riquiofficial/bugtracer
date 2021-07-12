@@ -27,3 +27,4 @@ To create a new team, you can click your profile picture in the nav bar, select 
 - Django Rest Framework v3.12.2
 - Django-environ 0.4.5
 - Whitenoise 5.2
+- Dj-database-url 0.5.0
