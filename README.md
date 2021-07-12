@@ -22,7 +22,7 @@ To create a new team, you can click your profile picture in the nav bar, select 
 
 ## Dependencies
 
-- Python v3.8
+- Python v3.8.3
 - Django v2.2.5
 - Django Rest Framework v3.12.2
 - Django-environ 0.4.5

@@ -158,7 +158,7 @@ export function createBugHtmlElement(bug) {
           <a
             href="/project/${bug.project.id}">
             <img
-                style="width: 30px"
+                style="width: 30px; height: 30px; object-fit: cover"
                 class="rounded-circle"
                 src="${bug.project.logo}"
                 alt="${bug.project.title} logo"/>

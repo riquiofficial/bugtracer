@@ -111,7 +111,7 @@ export function createProjectHtmlElement(project) {
     <p class="h4 text-info">
     ${
       project.logo
-        ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px"
+        ? `<img class="mr-4 rounded-circle" style="width: 60px; height: 60px; object-fit: cover"
     src="${project.logo}" alt="${project.title} logo">`
         : ""
     }
