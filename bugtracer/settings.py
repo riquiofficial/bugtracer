@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DJANGO_DEBUG") != 'False'
 
 ALLOWED_HOSTS = ['localhost', 'bug-tracer.herokuapp.com']
 
@@ -57,6 +57,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+#  SECURITY
+
+# xframe
+# X_FRAME_OPTIONS = 'DENY'
+
+# csrf
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
 
 ROOT_URLCONF = 'bugtracer.urls'
 
@@ -148,5 +158,5 @@ REST_FRAMEWORK = {
 }
 
 # Heroku: Update database configuration from $DATABASE_URL
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
