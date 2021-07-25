@@ -25,6 +25,7 @@ import datetime
 
 @login_required(login_url='login')
 def index(request, slug=""):
+
     # pass request object in to forms to access user data
     bug_form = BugForm(request.POST, request=request)
     project_form = ProjectForm(request.POST, request=request)
@@ -174,7 +175,7 @@ def index(request, slug=""):
     # for each group user is in, add active, solved, this months bugs and projects
     for group in groups:
         active_bugs.append(Bug.objects.filter(
-            project__group=group).order_by('priority', '-date'))
+            project__group=group, solved=False).order_by('priority', '-date'))
         solved_bugs.append(Bug.objects.filter(
             project__group=group, solved=True).order_by('priority', '-date'))
         this_months_bugs.append(Bug.objects.filter(
@@ -192,6 +193,7 @@ def index(request, slug=""):
         if solved_bugs[0].count() > 0:
             solved_bugs_percentage = int(
                 round(solved_bugs[0].count() / total_bugs * 100))
+            
 
     if len(this_months_bugs):
         this_months_bugs = this_months_bugs[0].count()
@@ -208,6 +210,7 @@ def index(request, slug=""):
         for project in all_projects[0]:
             bugs_per_project[project.title] = Bug.objects.filter(
                 project=project).count()
+
 
     return render(request, 'bugtracerapp/layout.html', {"bug_form": bug_form,
                                                         "project_form": project_form, "message_form": message_form,

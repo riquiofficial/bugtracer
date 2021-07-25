@@ -4,6 +4,8 @@ import { fetchProjects } from "./projects.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
 
+import swal from "sweetalert";
+
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
@@ -97,7 +99,7 @@ export function submitForm(csrf, formData) {
     body: formData,
   })
     .then((response) => response.json())
-    .then((result) => alert(result.message ? result.message : result.error))
+    .then((result) => swal(result.message ? result.message : result.error))
     .then(() => clearAllForms())
     .catch((err) => console.log(err));
 

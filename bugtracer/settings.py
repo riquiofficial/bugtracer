@@ -31,7 +31,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DJANGO_DEBUG") != 'False'
 
-ALLOWED_HOSTS = ['localhost', 'bug-tracer.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'bug-tracer.herokuapp.com']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup.apps.CleanupConfig',
     'rest_framework',
     'bugtracerapp'
 ]
@@ -94,8 +95,12 @@ WSGI_APPLICATION = 'bugtracer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_URL"),
+        'PORT': env("DB_PORT")
     }
 }
 
@@ -157,6 +162,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-# Heroku: Update database configuration from $DATABASE_URL
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES['default'].update(db_from_env)
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
