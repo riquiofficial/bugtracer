@@ -27,18 +27,19 @@ import datetime
 def index(request, slug=""):
 
     # pass request object in to forms to access user data
-    bug_form = BugForm(request.POST, request=request)
-    project_form = ProjectForm(request.POST, request=request)
-    message_form = MessageForm(request.POST, request=request)
+    bug_form = BugForm(request=request)
+    project_form = ProjectForm(request=request)
+    message_form = MessageForm(request=request)
+
     group_form = GroupForm
 
     if request.method == "POST":
+
         data = request.POST
 
         # check all fields filled out
         for key, value in data.items():
             if value == "":
-                print(data)
                 return JsonResponse({"error": f"Please fill all fields, {key} was missing"}, status=401)
 
         # New Bug Form Submission. if data contains priority field it is bug form
@@ -81,7 +82,6 @@ def index(request, slug=""):
                 # check group exists. if user in group add to project
                 group = Group.objects.get(pk=data['group'])
                 if group in request.user.groups.all():
-                    print("group addition worked")
                     new_project.group = group
                 new_project.save()
 
@@ -129,7 +129,7 @@ def index(request, slug=""):
                 invited_group = Group.objects.get(
                     name=data["invite_group_name"])
                 if invited_group in invited_user.groups.all():
-                    return JsonResponse({"error": f"{invited_user} is alread a member of {invited_group}"}, status=409)
+                    return JsonResponse({"error": f"{invited_user} is already a member of {invited_group}"}, status=409)
 
                 else:
                     Alert.objects.create(
@@ -288,7 +288,6 @@ class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
         queryset = []
         for group in groups:
             queryset.append(Project.objects.filter(group=group))
-        print(queryset, queryset[0])
         return queryset[0]
 
 

@@ -35,7 +35,7 @@ class Message(models.Model):
 
 class Alert(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.CharField(max_length=100)
+    content = models.CharField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 

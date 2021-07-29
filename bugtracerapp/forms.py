@@ -42,11 +42,9 @@ class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ProjectForm, self).__init__(*args, **kwargs)
-        users_in_group = []
-        for group in self.request.user.groups.all():
-            users_in_group.append(User.objects.filter(groups=group))
-        if len(users_in_group):
-            self.fields['contributors'].queryset = users_in_group[0]
+        queryset = User.objects.filter(groups__in=self.request.user.groups.all())
+        # do not return duplicate users: call distinct method.
+        self.fields['contributors'].queryset = queryset.distinct()
         self.fields['group'].queryset = self.request.user.groups.all()
 
     class Meta:
@@ -112,11 +110,9 @@ class MessageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(MessageForm, self).__init__(*args, **kwargs)
-        users_in_group = []
-        for group in self.request.user.groups.all():
-            users_in_group.append(User.objects.filter(groups=group))
-        if len(users_in_group):
-            self.fields['receiver'].queryset = users_in_group[0]
+        queryset = User.objects.filter(groups__in=self.request.user.groups.all())
+        # do not return duplicate users: call distinct method.
+        self.fields['receiver'].queryset = queryset.distinct()
 
     class Meta:
         model = Message
