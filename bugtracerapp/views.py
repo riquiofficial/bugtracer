@@ -285,10 +285,8 @@ class Projects(LoginRequiredMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         groups = self.request.user.groups.all()
-        queryset = []
-        for group in groups:
-            queryset.append(Project.objects.filter(group=group))
-        return queryset[0]
+        queryset = Project.objects.filter(group__in=groups)
+        return queryset
 
 
 class Profile(LoginRequiredMixin, viewsets.ModelViewSet):

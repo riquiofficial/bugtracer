@@ -42,9 +42,9 @@ class ProjectForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ProjectForm, self).__init__(*args, **kwargs)
-        queryset = User.objects.filter(groups__in=self.request.user.groups.all())
+        contributors_queryset = User.objects.filter(groups__in=self.request.user.groups.all())
         # do not return duplicate users: call distinct method.
-        self.fields['contributors'].queryset = queryset.distinct()
+        self.fields['contributors'].queryset = contributors_queryset.distinct()
         self.fields['group'].queryset = self.request.user.groups.all()
 
     class Meta:
