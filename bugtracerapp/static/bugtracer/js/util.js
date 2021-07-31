@@ -4,13 +4,12 @@ import { fetchProjects } from "./projects.js";
 import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
 
-import swal from "sweetalert";
+const jsContent = document.getElementById("jsContent");
 
 // dynamically show which div to display
 export function showPage(page) {
   const bugForm = document.getElementById("registerBugForm");
   const projectForm = document.getElementById("registerProjectForm");
-  const jsContent = document.getElementById("jsContent");
   const messageForm = document.getElementById("messageForm");
   const dashboard = document.getElementById("dashboard");
   const teamForm = document.getElementById("teamForm");
@@ -218,4 +217,8 @@ export function activateContributorProfiles() {
       }
     })
   );
+}
+
+export function loadingScreen() {
+  jsContent.innerHTML = '<div id="loader"></div>';
 }

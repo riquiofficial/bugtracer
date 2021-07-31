@@ -202,6 +202,7 @@ export function fetchAlertsPage(pageNumber) {
 </ul>`;
 
   const alertList = document.getElementById("alert-list");
+  alertList.innerHTML = '<div id="loader"></div>';
 
   fetch(`/api/alerts/?format=json${pageNumber ? "&page=" + pageNumber : ""}`)
     .then((response) => response.json())

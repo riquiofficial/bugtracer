@@ -6,6 +6,7 @@ import {
   activatePaginationLinks,
   formatDate,
   activateContributorProfiles,
+  loadingScreen,
 } from "./util.js";
 
 const baseUrl = window.location.origin;
@@ -57,6 +58,7 @@ document.getElementById("submitBugForm").addEventListener("click", () => {
 // active and solved bugs pages
 
 activeBugs.addEventListener("click", () => {
+  loadingScreen();
   fetchBugs();
   showPage("activeBugs");
   closeNavBarMenu();
@@ -68,6 +70,7 @@ activeBugs.addEventListener("click", () => {
 });
 
 solved.addEventListener("click", () => {
+  loadingScreen();
   fetchBugs(1, true);
   showPage("resolvedBugs");
   closeNavBarMenu();

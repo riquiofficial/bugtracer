@@ -6,6 +6,7 @@ import {
   activatePaginationLinks,
   formatDate,
   activateContributorProfiles,
+  loadingScreen,
 } from "./util.js";
 
 import { fetchProfile } from "./profile.js";
@@ -56,6 +57,7 @@ document.getElementById("submitProjectForm").addEventListener("click", () => {
 // project list page
 
 document.getElementById("allProjects").addEventListener("click", () => {
+  loadingScreen();
   showPage("allProjects");
   fetchProjects();
   history.pushState(

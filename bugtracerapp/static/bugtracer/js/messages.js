@@ -236,7 +236,8 @@ export function fetchMessagesPage(pageNumber) {
     heading +
     `<ul id="message-list" class="list-group">
 </ul>`;
-
+  const messageList = document.getElementById("message-list");
+  messageList.innerHTML = "<div id='loader'></div>";
   // new message page
   const newMessageButton = document.getElementById("newMessageButton");
   newMessageButton.addEventListener("click", () => {
@@ -254,7 +255,6 @@ export function fetchMessagesPage(pageNumber) {
     sendButton.addEventListener("click", sendMessage);
   });
 
-  const messageList = document.getElementById("message-list");
   fetch(`/api/messages/?format=json${pageNumber ? "&page=" + pageNumber : ""}`)
     .then((response) => response.json())
     .then((data) =>
