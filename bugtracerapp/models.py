@@ -78,7 +78,7 @@ class Project(models.Model):
         ordering = ['title']
 
     def __str__(self):
-        return self.title
+        return self.title.__str__()
 
     # get contributors for a project
     def get_user_profiles(self):
