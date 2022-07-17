@@ -5,16 +5,18 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
+    """User extended from Django's defualt AbstractUser."""
     profile_picture = models.ImageField(
         upload_to="profile-pics/", null=True, blank=True, default="profile-pics/undraw_profile.svg")
     bio = models.CharField(max_length=200, null=True, blank=True)
 
-    # gets correct profile page on edit profile form submission
     def get_absolute_url(self):
+        """Get correct profile page on edit profile form submission."""
         return reverse('profile', kwargs={'slug': self.username})
 
 
 class Message(models.Model):
+    """Messages users send to each other."""
     sender = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="sent_messages")
     receiver = models.ManyToManyField(User, related_name="received_messages")
@@ -24,6 +26,7 @@ class Message(models.Model):
 
     # for use by message serializer to get multiple received messages
     def get_user_received_profiles(self):
+        """Users who the message was sent to."""
         user_list = []
         for user in self.receiver.all():
             user_list.append(user)
@@ -34,6 +37,7 @@ class Message(models.Model):
 
 
 class Alert(models.Model):
+    """Alerts sent to users."""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -44,6 +48,7 @@ class Alert(models.Model):
 
 
 class Bug(models.Model):
+    """Bug in a project."""
     title = models.CharField(max_length=50, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=500)
@@ -66,6 +71,7 @@ class Bug(models.Model):
 
 
 class Project(models.Model):
+    """Project being worked on."""
     title = models.CharField(max_length=50, blank=True, null=True)
     contributors = models.ManyToManyField(User, blank=True)
     description = models.CharField(max_length=500)
@@ -82,6 +88,7 @@ class Project(models.Model):
 
     # get contributors for a project
     def get_user_profiles(self):
+        """Get all users who are contributors of the project."""
         user_list = []
         for user in self.contributors.all():
             user_list.append(user)
