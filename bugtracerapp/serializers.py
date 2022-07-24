@@ -16,8 +16,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ['id', 'name', 'users']
 
-    # get all users in requested team
     def get_users(self, obj):
+        """get all users in requested team."""
         user_list = []
         for user in User.objects.filter(groups=obj):
             user_list.append(user.username)
