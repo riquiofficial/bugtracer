@@ -1,6 +1,7 @@
 # Environment Variables
 env
 .env
+venv
 
 # Database
 *.sqlite3
