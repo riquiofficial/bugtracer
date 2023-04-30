@@ -5,55 +5,63 @@ import { fetchAlertsPage } from "./alerts.js";
 import { fetchProfile } from "./profile.js";
 
 const jsContent = document.getElementById("jsContent");
+const bugForm = document.getElementById("registerBugForm");
+const projectForm = document.getElementById("registerProjectForm");
+const messageForm = document.getElementById("messageForm");
+const dashboard = document.getElementById("dashboard");
+const teamForm = document.getElementById("teamForm");
+const allPages = [jsContent, bugForm, projectForm, messageForm, dashboard, teamForm]
+
+const navBugs = document.getElementById("nav-bugs").classList;
+const navDashboard = document.getElementById("nav-dashboard").classList;
+const navProjects = document.getElementById("nav-projects").classList;
+const allNavElements = [navBugs, navDashboard, navProjects];
 
 // dynamically show which div to display
 export function showPage(page) {
-  const bugForm = document.getElementById("registerBugForm");
-  const projectForm = document.getElementById("registerProjectForm");
-  const messageForm = document.getElementById("messageForm");
-  const dashboard = document.getElementById("dashboard");
-  const teamForm = document.getElementById("teamForm");
+  // hide all elements
+  allPages.forEach((element) => {
+    element.style.display = "none";
+  });
 
-  jsContent.style.display = "none";
-  bugForm.style.display = "none";
-  projectForm.style.display = "none";
-  messageForm.style.display = "none";
-  dashboard.style.display = "none";
-  teamForm.style.display = "none";
+  // remove active nav styles
+  allNavElements.forEach((element) => {
+    element.remove("active");
+  });
 
-  // nav styles
-  const navBugs = document.getElementById("nav-bugs").classList;
-  const navDashboard = document.getElementById("nav-dashboard").classList;
-  const navProjects = document.getElementById("nav-projects").classList;
-
-  navBugs.remove("active");
-  navDashboard.remove("active");
-  navProjects.remove("active");
-
-  if (page === "registerBug") {
-    bugForm.style.display = "block";
-    navBugs.add("active");
-  } else if (page == "registerProject") {
-    projectForm.style.display = "block";
-    navProjects.add("active");
-  } else if (page == "jsContent") {
-    jsContent.style.display = "block";
-  } else if (page == "activeBugs") {
-    jsContent.style.display = "block";
-    navBugs.add("active");
-  } else if (page == "resolvedBugs") {
-    jsContent.style.display = "block";
-    navBugs.add("active");
-  } else if (page == "messagePage") {
-    messageForm.style.display = "block";
-  } else if (page == null) {
-    dashboard.style.display = "block";
-    navDashboard.add("active");
-  } else if (page == "allProjects") {
-    jsContent.style.display = "block";
-    navProjects.add("active");
-  } else if (page == "teamForm") {
-    teamForm.style.display = "block";
+  switch (page) {
+    case "registerBug":
+      bugForm.style.display = "block";
+      navBugs.add("active");
+      break;
+    case "registerProject":
+      projectForm.style.display = "block";
+      navProjects.add("active");
+      break;
+    case "jsContent":
+      jsContent.style.display = "block";
+      break;
+    case "activeBugs":
+      jsContent.style.display = "block";
+      navBugs.add("active");
+      break;
+    case "resolvedBugs":
+      jsContent.style.display = "block";
+      navBugs.add("active");
+      break;
+    case "messagePage":
+      messageForm.style.display = "block";
+      break;
+    case "allProjects":
+      jsContent.style.display = "block";
+      navProjects.add("active");
+      break;
+    case "teamForm":
+      teamForm.style.display = "block";
+      break;
+    default:
+      dashboard.style.display = "block";
+      navDashboard.add("active");
   }
 }
 
